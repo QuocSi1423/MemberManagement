@@ -134,7 +134,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
 
             if (maTVSubstring != null && !maTVSubstring.isEmpty()) {
                 conditions = criteriaBuilder.and(conditions, criteriaBuilder.equal(
-                    criteriaBuilder.substring(memberRoot.get("maTV").as(String.class), 3, 2), "23"));
+                    criteriaBuilder.substring(memberRoot.get("maTV").as(String.class), 3, 2), maTVSubstring));
             }
 
             System.err.println(conditions.toString());
