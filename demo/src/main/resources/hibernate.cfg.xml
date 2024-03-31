@@ -18,7 +18,8 @@
         <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property> 
         <property name="hibernate.hbm2dll.auto">create-drop</property>
         <property name="hibernate.show_sql">true</property>
-        <mapping resource = "Member.hbm.xml"/>
+        <!-- <mapping resource = "Member.hbm.xml"/> -->
+        <mapping class="Entity.Member"/>
     </session-factory>
 </hibernate-configuration>
 
