@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.2//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.2.dtd">
+
+<hibernate-mapping>
+  <class name="Entity.Member" table="Thanhvien">
+
+    <meta attribute="class-description">This class contains the thanhvien detail. </meta>
+
+    <id name="maTV" type="long" column="MaTV"/>
+    <property name="hoTen" column="HoTen" type="string"/> 
+    <property name="khoa" column="Khoa" type="string"/>
+    <property name="nganh" column="Nganh" type="string"/>
+    <property name="sdt" column="SDT" type="int"/>
+
+  </class>
+</hibernate-mapping>
