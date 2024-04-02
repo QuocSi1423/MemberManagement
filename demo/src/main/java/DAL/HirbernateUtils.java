@@ -21,3 +21,4 @@ public class HirbernateUtils {
   public static void close(){
     getSessionFactory().close();
   }
+}
