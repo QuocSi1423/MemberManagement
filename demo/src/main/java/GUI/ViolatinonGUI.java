@@ -193,8 +193,6 @@ public class ViolatinonGUI extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
-    
     private void tableCustomizer() {
         JTableHeader header = jTable_Violation.getTableHeader();
         header.setPreferredSize(new Dimension(header.getPreferredSize().width, 36));
