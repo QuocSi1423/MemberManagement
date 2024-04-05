@@ -4,17 +4,23 @@
  */
 package GUI.Equipment;
 
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
+//import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
-
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  *
@@ -33,14 +39,14 @@ public class EquipmentGUI extends JPanel {
     int strokeWidth = 2;
     Graphics g;
     Input txtGetByName;
-    
+
     public EquipmentGUI() {
         initComponents();
         jPanel2.add(new MyCustomJPanel());
         txtGetByName = new Input("Tìm kiếm (Ctrl + K)");
         txtGetByName.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         txtGetByName.setBorder(createRoundedBorder(Color.GRAY, 2, 16, 0));
-        
+
         int ctrlKeyK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
         txtGetByName.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_K, ctrlKeyK), "focusOnTxtGetByName");
         txtGetByName.getActionMap().put("focusOnTxtGetByName", new AbstractAction() {
@@ -49,11 +55,11 @@ public class EquipmentGUI extends JPanel {
                 txtGetByName.requestFocusInWindow();
             }
         });
-        
+
         jPanel3.add(txtGetByName);
         showTable();
     }
-    
+
     public void showTable() {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
             @Override
@@ -64,7 +70,7 @@ public class EquipmentGUI extends JPanel {
                 return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             }
         };
-        
+
         table.setShowGrid(true);
         table.setGridColor(Color.gray);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -73,15 +79,20 @@ public class EquipmentGUI extends JPanel {
         table.getColumnModel().getColumn(3).setCellRenderer(renderer);
         DefaultTableModel model = (DefaultTableModel) this.table.getModel();
         model.setRowCount(0);
-        
+//      for (StudentDTO stu : studentList) {
+//      model.addRow(new Object[] {
+//          stu.getID(), stu.getLastName(), stu.getFirstName(),
+//          lblDelete
+//      });
+//    }
     }
-    
+
     public Border createRoundedBorder(Color color, int thickness, int radii, int pointerSize) {
-       Border lineBorder = new LineBorder(color, thickness);
-       Border emptyBorder = new EmptyBorder(thickness, thickness, thickness + pointerSize, thickness);
-       return new CompoundBorder(lineBorder, emptyBorder);
-   }
-    
+        Border lineBorder = new LineBorder(color, thickness);
+        Border emptyBorder = new EmptyBorder(thickness, thickness, thickness + pointerSize, thickness);
+        return new CompoundBorder(lineBorder, emptyBorder);
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -110,6 +121,11 @@ public class EquipmentGUI extends JPanel {
         btnExcel.setForeground(new java.awt.Color(255, 255, 255));
         btnExcel.setText("Thêm file từ Excel");
         btnExcel.setPreferredSize(new java.awt.Dimension(200, 40));
+        btnExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcelActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnExcel);
 
         btnCreate.setBackground(new java.awt.Color(0, 102, 255));
@@ -242,7 +258,7 @@ public class EquipmentGUI extends JPanel {
         CreateEquipmentGUI create = new CreateEquipmentGUI();
         create.setVisible(true);
         create.setSize(775, 450);
-        create.setLocationRelativeTo(null); 
+        create.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -253,44 +269,89 @@ public class EquipmentGUI extends JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnUpdateActionPerformed
 
+    private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {
+        File excelFile;
+        FileInputStream excelFIS = null;
+        BufferedInputStream excelBIS = null;
+        XSSFWorkbook excelJTableImport = null;
+
+        DefaultTableModel model = (DefaultTableModel) this.table.getModel();
+        model.setRowCount(0);
+
+        String defaultCurrentDirectoryPath = "C:\\Users\\luong\\Downloads\\";
+        JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
+        System.out.println("excelFileChooser " + excelFileChooser);
+        int excelChoose = excelFileChooser.showOpenDialog(null);
+
+        if (excelChoose == JFileChooser.APPROVE_OPTION) {
+            try {
+                excelFile = excelFileChooser.getSelectedFile();
+                excelFIS = new FileInputStream(excelFile);
+                excelBIS = new BufferedInputStream(excelFIS);
+
+                excelJTableImport = new XSSFWorkbook(excelBIS);
+                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
+                System.out.println("excelsheet " + excelSheet);
+
+                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
+                    System.out.println("row: " + row);
+                    XSSFRow excelRow = excelSheet.getRow(row);
+                    XSSFCell excelId = excelRow.getCell(0);
+                    XSSFCell excelName = excelRow.getCell(1);
+                    XSSFCell excelDes = excelRow.getCell(2);
+                    model.addRow(new Object[] {
+                        excelId, excelName, excelDes
+                    });
+                }
+
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException ex) {
+                Logger.getLogger(EquipmentGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     private class CustomRowHeightRenderer extends DefaultTableCellRenderer {
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object object, boolean isSelected, boolean hasFocus, int row, int column) {
             Component component = super.getTableCellRendererComponent(table, object, isSelected, hasFocus, row, column);
-            
+
             int desiredRowHeight = 40;
             table.setRowHeight(row, desiredRowHeight);
             return component;
         }
     }
-    
+
     private class CustomHeaderRenderer extends DefaultTableCellRenderer {
+
         @Override
         public Component getTableCellRendererComponent(JTable table, Object object, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component component = super.getTableCellRendererComponent(table, object, isSelected, hasFocus, row, column);            
+            Component component = super.getTableCellRendererComponent(table, object, isSelected, hasFocus, row, column);
             String hexColor = "#0066FF";
             Color customColor = Color.decode(hexColor);
             component.setBackground(customColor);
             component.setForeground(Color.WHITE);
             component.setFont(new Font("Segoe UI", Font.BOLD, 16));
             component.setPreferredSize(new Dimension(row, 40));
-            
+
             JTableHeader header = table.getTableHeader();
             TableColumnModel colModel = header.getColumnModel();
-            TableColumn col = colModel.getColumn(column); 
+            TableColumn col = colModel.getColumn(column);
             return component;
         }
     }
-    
+
     public static void main(String[] args) {
-        FlatMacLightLaf.setup();
+//        FlatMacLightLaf.setup();
         JFrame j = new JFrame();
         j.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         j.setLayout(new FlowLayout());
         j.add(new EquipmentGUI());
         j.setVisible(true);
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCreate;
     private javax.swing.JButton btnDelete;
