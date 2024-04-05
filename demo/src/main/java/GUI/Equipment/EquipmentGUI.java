@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.border.Border;
@@ -17,6 +18,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
+
+import BUS.EquitmentBUS;
+import DAL.EquipmentDAL;
+import Entity.Equipment;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -27,21 +32,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author luong
  */
 public class EquipmentGUI extends JPanel {
-
-    private boolean over;
-    private Color fill;
-    private Color line;
-    Color fillOriginal = new Color(52, 152, 219);
-    Color fillOver = new Color(41, 128, 185);
-    Color fillClick = new Color(211, 84, 0);
-    Color lineOriginal = new Color(236, 240, 241);
-    Color lineOver = new Color(189, 195, 199);
-    int strokeWidth = 2;
-    Graphics g;
+    private Equipment equipment;
+    private EquipmentDAL equipmentDAL;
+    private EquitmentBUS equitmentBUS;
+    private ArrayList<Equipment> listEquipmentBorrowed;
+    private ArrayList<Equipment> listEquipmentNotBorrowed;
     Input txtGetByName;
 
     public EquipmentGUI() {
         initComponents();
+        listEquipmentBorrowed = new ArrayList<>();
+        listEquipmentNotBorrowed = new ArrayList<>();
+        equipmentDAL = new EquipmentDAL();
+        equitmentBUS = new EquitmentBUS(equipmentDAL);
+        equipment = new Equipment();
+
+        listEquipmentBorrowed = equitmentBUS.getAllEquipmentBorrowed();
+        listEquipmentNotBorrowed = equitmentBUS.getAllEquipmentNotBorrowed();
+
         jPanel2.add(new MyCustomJPanel());
         txtGetByName = new Input("Tìm kiếm (Ctrl + K)");
         txtGetByName.setFont(new Font("Segoe UI", Font.PLAIN, 18));
