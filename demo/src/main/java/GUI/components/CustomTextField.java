@@ -20,7 +20,7 @@ public class CustomTextField extends JTextField {
 
         // Draw the rounded rectangle border
         g2.setColor(getBackground());
-        g2.fillRoundRect(1, 1, getWidth() - 3, getHeight() - 3, cornerRadius, cornerRadius);
+        g2.fillRoundRect(1, 1, getWidth() - 2, getHeight() - 2, cornerRadius, cornerRadius);
 
         super.paintComponent(g);
     }
