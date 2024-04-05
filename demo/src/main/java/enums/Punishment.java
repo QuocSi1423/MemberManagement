@@ -7,10 +7,12 @@ public class Punishment {
 
   {
     punishmentList = new ArrayList<>();
-    punishmentList.add("Phạt tiền");
+    punishmentList.add("Bồi thường");
     punishmentList.add("Khóa thẻ 1 tháng");
     punishmentList.add("Khóa thẻ 2 tháng");
-    punishmentList.add("Khóa thẻ 6 tháng");
+    punishmentList.add("Khóa thẻ 1 tháng + bồi thường");
+    punishmentList.add("Khóa thẻ 2 tháng + bồi thường");
+    punishmentList.add("Khóa thẻ vĩnh viễn");
   }
 
   public static ArrayList<String> getPunishment(){
