@@ -74,7 +74,7 @@ public class ViolationDAL implements IViolationDAL {
     List<Violation> listViolations = null;
     try {
       Session session = this.sessionFactory.openSession();
-      String hql = "from Violation where (:status is null or TrangThaiXL = :status) and (:startDate is null or :endDate is null or (NgayXL < :endDate and NgayXL > :startDate))";
+      String hql = "SELECT v FROM Violation v JOIN FETCH v.member WHERE (:status is null or v.status = :status) and (:startDate is null or :endDate is null or (v.handlingDate < :endDate and v.handlingDate > :startDate))";
       listViolations = session.createQuery(hql, Violation.class).setParameter("status", status).setParameter("startDate", startDate).setParameter("endDate", endDate).list();
       return listViolations;
     } catch (Exception e) {
