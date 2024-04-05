@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity // This annotation marks the class as a Hibernate entity
-@Table(name = "Thanhvien") // This annotation specifies the mapped table name
+@Table(name = "thanhvien") // This annotation specifies the mapped table name
 public class Member {
 
     @Id // This annotation marks the property as the primary key
