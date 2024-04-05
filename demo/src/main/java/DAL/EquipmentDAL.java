@@ -11,13 +11,12 @@ import org.hibernate.Transaction;
 
 import com.google.protobuf.LazyStringArrayList;
 
-import DAL.IDAL.IObjectDAL;
 import Entity.Equipment;
 
 import  javax.persistence.criteria.Predicate;
+import DAL.IDAL.*;
 
-
-public class EquipmentDAL implements IObjectDAL{
+public class EquipmentDAL implements IObjectDAL, IEquipmentDAL{
 	 private HirbernateUtils sessionFactory;
 	 
 	 public EquipmentDAL() {
@@ -99,12 +98,12 @@ public class EquipmentDAL implements IObjectDAL{
     public ArrayList<Equipment> getAllEquipmentNotBorrowed() {
         Session session = sessionFactory.getSessionFactory().openSession();
         try {
-        	String query = "SELECT *\r\n"
-        			+ "FROM thietbi\r\n"
-        			+ "WHERE MaTB NOT IN (\r\n"
-        			+ "    SELECT MaTB\r\n"
-        			+ "    FROM thongtinsd\r\n"
-        			+ "    WHERE TGMuon <= NOW() AND (TGTra > NOW() OR TGTra IS NULL)\r\n"
+        	String query = "SELECT"
+        			+ "FROM thietbi"
+        			+ "WHERE MaTB NOT IN ("
+        			+ "    SELECT MaTB"
+        			+ "    FROM thongtinsd"
+        			+ "    WHERE TGMuon <= NOW() AND (TGTra > NOW() OR TGTra IS NULL)"
         			+ ")";
             return (ArrayList<Equipment>) session.createQuery("query").list();
         } finally {
@@ -115,9 +114,9 @@ public class EquipmentDAL implements IObjectDAL{
     public ArrayList<Equipment> getAllEquipmentBorrowed() {
         Session session = sessionFactory.getSessionFactory().openSession();
         try {
-        	String query = "SELECT thietbi.*\r\n"
-        			+ "FROM thietbi\r\n"
-        			+ "INNER JOIN thongtinsd ON thietbi.MaTB = thongtinsd.MaTB\r\n"
+        	String query = "SELECT thietbi.*"
+        			+ "FROM thietbi"
+        			+ "INNER JOIN thongtinsd ON thietbi.MaTB = thongtinsd.MaTB"
         			+ "WHERE thongtinsd.TGMuon <= NOW() AND (thongtinsd.TGTra > NOW()"
         			+ "OR thongtinsd.TGTra IS NULL)";
             return (ArrayList<Equipment>) session.createQuery("query").list();
@@ -133,12 +132,5 @@ public class EquipmentDAL implements IObjectDAL{
 		return true;
     }
 	
-	public static void main(String[] args) {
-		Equipment model = new Equipment(2, "Máy Chiếu", "Máy Chiếu mô tả");
-		EquipmentDAL e = new EquipmentDAL();
-		e.removeObject((long) 2);
-		
-	}
-
 	
 }

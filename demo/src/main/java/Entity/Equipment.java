@@ -9,7 +9,7 @@ import javax.persistence.Table;
 public class Equipment {
 	@Id 
     @Column(name = "MaTB") 
-	private int maTB;
+	private Long maTB;
 	
 
     @Column(name = "TenTB") 
@@ -20,18 +20,18 @@ public class Equipment {
     
     public Equipment() {}
 
-	public Equipment(int maTB, String tenTB, String moTaTB) {
+	public Equipment(Long maTB, String tenTB, String moTaTB) {
 		super();
 		this.maTB = maTB;
 		this.tenTB = tenTB;
 		this.moTaTB = moTaTB;
 	}
 
-	public int getMaTB() {
+	public Long getMaTB() {
 		return maTB;
 	}
 
-	public void setMaTB(int maTB) {
+	public void setMaTB(Long maTB) {
 		this.maTB = maTB;
 	}
 

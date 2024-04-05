@@ -16,7 +16,7 @@ public class UsageDAL implements IUsageDAL {
 
     public UsageDAL() {
         try {
-            this.sessionFactory = HibernateUtils.getSessionFactory();
+            this.sessionFactory = HirbernateUtils.getSessionFactory();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
