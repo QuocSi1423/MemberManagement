@@ -32,28 +32,28 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @author luong
  */
 public class EquipmentGUI extends JPanel {
-    private Equipment equipment;
+
     private EquipmentDAL equipmentDAL;
-    private EquitmentBUS equitmentBUS;
-    private ArrayList<Equipment> listEquipmentBorrowed;
-    private ArrayList<Equipment> listEquipmentNotBorrowed;
+    private EquitmentBUS equipmentBUS;
+    private ArrayList<Equipment> list;
+    private int countBorrowed;
+    private ButtonGroup buttonGroup;
     Input txtGetByName;
 
     public EquipmentGUI() {
         initComponents();
-        listEquipmentBorrowed = new ArrayList<>();
-        listEquipmentNotBorrowed = new ArrayList<>();
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(rbAll);
+        buttonGroup.add(rbBorrowed);
+        buttonGroup.add(rbNoBorrowed);
+        list = new ArrayList<>();
         equipmentDAL = new EquipmentDAL();
-        equitmentBUS = new EquitmentBUS(equipmentDAL);
-        equipment = new Equipment();
-
-        listEquipmentBorrowed = equitmentBUS.getAllEquipmentBorrowed();
-        listEquipmentNotBorrowed = equitmentBUS.getAllEquipmentNotBorrowed();
+        equipmentBUS = new EquitmentBUS(equipmentDAL);
+        countBorrowed = equipmentBUS.getAllEquipmentBorrowed().size();
 
         jPanel2.add(new MyCustomJPanel());
         txtGetByName = new Input("Tìm kiếm (Ctrl + K)");
         txtGetByName.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        txtGetByName.setBorder(createRoundedBorder(Color.GRAY, 2, 16, 0));
 
         int ctrlKeyK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
         txtGetByName.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_K, ctrlKeyK), "focusOnTxtGetByName");
@@ -65,10 +65,11 @@ public class EquipmentGUI extends JPanel {
         });
 
         jPanel3.add(txtGetByName);
-        showTable();
+        rbAll.setSelected(true);
+        showTable(0);
     }
 
-    public void showTable() {
+    public void showTable(int isBorred) {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -81,18 +82,42 @@ public class EquipmentGUI extends JPanel {
 
         table.setShowGrid(true);
         table.setGridColor(Color.gray);
-        table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         table.setDefaultRenderer(Object.class, new CustomRowHeightRenderer());
         table.getTableHeader().setDefaultRenderer(new CustomHeaderRenderer());
         table.getColumnModel().getColumn(3).setCellRenderer(renderer);
         DefaultTableModel model = (DefaultTableModel) this.table.getModel();
         model.setRowCount(0);
-//      for (StudentDTO stu : studentList) {
-//      model.addRow(new Object[] {
-//          stu.getID(), stu.getLastName(), stu.getFirstName(),
-//          lblDelete
-//      });
-//    }
+        int i = 0;
+        if (isBorred == 0) {
+            list.addAll(equipmentBUS.getAllEquipmentBorrowed());
+            list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
+            for (Equipment newEq : list) {
+                i++;
+                if (i <= countBorrowed) {
+                    model.addRow(new Object[]{
+                        newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đã mượn"
+                    });
+                } else {
+                    model.addRow(new Object[]{
+                        newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đang trống"
+                    });
+                }
+            }
+        } else if (isBorred == 1) {
+            for (Equipment newEq : list) {
+                model.addRow(new Object[]{
+                    newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đã mượn"
+                });
+            }
+        } else {
+            for (Equipment newEq : list) {
+                model.addRow(new Object[]{
+                    newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đang trống"
+                });
+            }
+        }
+
     }
 
     public Border createRoundedBorder(Color color, int thickness, int radii, int pointerSize) {
@@ -105,6 +130,9 @@ public class EquipmentGUI extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         btnExcel = new javax.swing.JButton();
@@ -114,11 +142,11 @@ public class EquipmentGUI extends JPanel {
         table = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
         btnDelete = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
+        rbAll = new javax.swing.JRadioButton();
+        rbBorrowed = new javax.swing.JRadioButton();
+        rbNoBorrowed = new javax.swing.JRadioButton();
 
         jPanel3.setPreferredSize(new java.awt.Dimension(600, 38));
         jPanel3.setLayout(new java.awt.BorderLayout());
@@ -164,16 +192,7 @@ public class EquipmentGUI extends JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setText("Danh sách thiết bị");
 
-        jCheckBox1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jCheckBox1.setText("All");
-
-        jCheckBox2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jCheckBox2.setText("Đang được mượn");
-
-        jCheckBox3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jCheckBox3.setText("Đang trống");
-
-        btnDelete.setBackground(new java.awt.Color(0, 102, 255));
+        btnDelete.setBackground(new java.awt.Color(86, 86, 86));
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Xóa");
@@ -195,6 +214,25 @@ public class EquipmentGUI extends JPanel {
             }
         });
 
+        rbAll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        rbAll.setText("All");
+        rbAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbAllActionPerformed(evt);
+            }
+        });
+
+        rbBorrowed.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        rbBorrowed.setText("Đang mượn");
+        rbBorrowed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbBorrowedActionPerformed(evt);
+            }
+        });
+
+        rbNoBorrowed.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        rbNoBorrowed.setText("Đang trống");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -204,11 +242,11 @@ public class EquipmentGUI extends JPanel {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jCheckBox1)
+                        .addComponent(rbAll)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox2)
+                        .addComponent(rbBorrowed)
                         .addGap(18, 18, 18)
-                        .addComponent(jCheckBox3)))
+                        .addComponent(rbNoBorrowed)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -227,10 +265,10 @@ public class EquipmentGUI extends JPanel {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jCheckBox2)
-                            .addComponent(jCheckBox3)
-                            .addComponent(jCheckBox1))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(rbAll)
+                            .addComponent(rbBorrowed)
+                            .addComponent(rbNoBorrowed))))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -258,24 +296,33 @@ public class EquipmentGUI extends JPanel {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 537, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         CreateEquipmentGUI create = new CreateEquipmentGUI();
-        create.setVisible(true);
-        create.setSize(775, 450);
-        create.setLocationRelativeTo(null);
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int indexRowSelected = table.getSelectedRow();
+        Long equipmentId = Long.parseLong("" + table.getValueAt(indexRowSelected, 0));
+        equipmentBUS.removeObject(equipmentId);
+        model.removeRow(indexRowSelected);
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        new UpdateEquipmentGUI(Long.parseLong("" + table.getValueAt(table.getSelectedRow(), 0)));
     }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void rbAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAllActionPerformed
+        showTable(0);
+    }//GEN-LAST:event_rbAllActionPerformed
+
+    private void rbBorrowedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbBorrowedActionPerformed
+        showTable(1);
+    }//GEN-LAST:event_rbBorrowedActionPerformed
 
     private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {
         File excelFile;
@@ -283,31 +330,30 @@ public class EquipmentGUI extends JPanel {
         BufferedInputStream excelBIS = null;
         XSSFWorkbook excelJTableImport = null;
 
+
         DefaultTableModel model = (DefaultTableModel) this.table.getModel();
         model.setRowCount(0);
 
         String defaultCurrentDirectoryPath = "C:\\Users\\luong\\Downloads\\";
         JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
-        System.out.println("excelFileChooser " + excelFileChooser);
         int excelChoose = excelFileChooser.showOpenDialog(null);
 
         if (excelChoose == JFileChooser.APPROVE_OPTION) {
             try {
+
                 excelFile = excelFileChooser.getSelectedFile();
                 excelFIS = new FileInputStream(excelFile);
                 excelBIS = new BufferedInputStream(excelFIS);
 
                 excelJTableImport = new XSSFWorkbook(excelBIS);
                 XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
-                System.out.println("excelsheet " + excelSheet);
 
                 for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
-                    System.out.println("row: " + row);
                     XSSFRow excelRow = excelSheet.getRow(row);
                     XSSFCell excelId = excelRow.getCell(0);
                     XSSFCell excelName = excelRow.getCell(1);
                     XSSFCell excelDes = excelRow.getCell(2);
-                    model.addRow(new Object[] {
+                    model.addRow(new Object[]{
                         excelId, excelName, excelDes
                     });
                 }
@@ -365,15 +411,18 @@ public class EquipmentGUI extends JPanel {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnExcel;
     private javax.swing.JButton btnUpdate;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rbAll;
+    private javax.swing.JRadioButton rbBorrowed;
+    private javax.swing.JRadioButton rbNoBorrowed;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }

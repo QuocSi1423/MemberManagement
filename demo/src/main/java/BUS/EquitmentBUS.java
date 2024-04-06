@@ -44,4 +44,9 @@ public class EquitmentBUS {
     public Equipment getAnObjectByID(Long objectID) {
     	return ((EquipmentDAL) equipmentDAL).getAnObjectByID(objectID);
     }
+    
+    public static void main(String[] args) {
+        EquitmentBUS eBus = new EquitmentBUS(new EquipmentDAL());
+		eBus.insertObject(new Equipment(Long.parseLong("1"), "abc", "abc"));
+    }
 }
