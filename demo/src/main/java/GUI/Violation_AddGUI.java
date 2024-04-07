@@ -11,6 +11,8 @@ import Entity.Member;
 import Entity.Violation;
 import enums.Punishment;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -126,6 +128,11 @@ public class Violation_AddGUI extends javax.swing.JFrame {
         });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
 
         jComboBox_Id.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox_Id.addItemListener(new java.awt.event.ItemListener() {
@@ -229,6 +236,8 @@ public class Violation_AddGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_clearActionPerformed
 
     private void jButton_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_addActionPerformed
+        ArrayList<Violation> list = (ArrayList<Violation>) violationBUS.GetViolationListByFilter(null, null, null);
+        Collections.sort(list, Comparator.comparingInt(Violation::getViolationId));
         if (checkInput() == 1) {
             JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin!");
         } else if (checkInput() == 2) {
@@ -240,8 +249,13 @@ public class Violation_AddGUI extends javax.swing.JFrame {
             if (jCheckBox.isSelected()) {
                 status = 1;
             }
-            System.out.println(jComboBox_Id.getSelectedItem().toString());
-            Violation violation = new Violation(0, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), Integer.parseInt(jTextField_Money.getText()), sqlDate, status);
+            int id = list.get(list.size() - 1).getViolationId() + 1;
+            Violation violation = new Violation();
+            if (jTextField_Money.getText().isEmpty()) {
+                violation = new Violation(id, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), null, sqlDate, status);
+            } else {
+                violation = new Violation(id, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), Integer.parseInt(jTextField_Money.getText()), sqlDate, status);
+            }
             violationBUS.CreateViolation(violation);
         }
     }//GEN-LAST:event_jButton_addActionPerformed
@@ -255,6 +269,15 @@ public class Violation_AddGUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jComboBox_IdItemStateChanged
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        if (jComboBox1.getSelectedIndex() == 1 || jComboBox1.getSelectedIndex() == 2 || jComboBox1.getSelectedIndex() == 5) {
+            jTextField_Money.setText("");
+            jTextField_Money.setEditable(false);
+        } else if (jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) {
+            jTextField_Money.setEditable(true);
+        }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -308,10 +331,12 @@ public class Violation_AddGUI extends javax.swing.JFrame {
     }
 
     private int checkInput() {
-        if (jComboBox_Id.getSelectedIndex() < 0 || jTextField_Name.getText().isEmpty() || jTextField_Money.getText().isEmpty() || ((JTextField) jDateChooser1.getDateEditor().getUiComponent()).getText().isEmpty()) {
+        if (jComboBox_Id.getSelectedIndex() < 0 || jTextField_Name.getText().isEmpty() || ((JTextField) jDateChooser1.getDateEditor().getUiComponent()).getText().isEmpty()) {
+            return 1;
+        } else if ((jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) && jTextField_Money.getText().isEmpty()) {
             return 1;
         }
-        if (!isNumber(jTextField_Money.getText())) {
+        if ((jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) && !isNumber(jTextField_Money.getText())) {
             return 2;
         }
         return 0;

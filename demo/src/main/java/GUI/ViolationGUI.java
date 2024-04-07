@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -18,9 +20,14 @@ import javax.swing.table.JTableHeader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 /**
  *
@@ -71,6 +78,11 @@ public class ViolationGUI extends javax.swing.JPanel {
         jTextField_Search.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextField_SearchFocusGained(evt);
+            }
+        });
+        jTextField_Search.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField_SearchKeyReleased(evt);
             }
         });
 
@@ -138,12 +150,22 @@ public class ViolationGUI extends javax.swing.JPanel {
         jCheckBox_processed.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
         jCheckBox_processed.setForeground(new java.awt.Color(0, 0, 0));
         jCheckBox_processed.setText("Đã xử lý");
+        jCheckBox_processed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox_processedActionPerformed(evt);
+            }
+        });
 
         jCheckBox_nonprocess.setBackground(new java.awt.Color(255, 255, 255));
         buttonGroup1.add(jCheckBox_nonprocess);
         jCheckBox_nonprocess.setFont(new java.awt.Font("Segoe UI", 0, 17)); // NOI18N
         jCheckBox_nonprocess.setForeground(new java.awt.Color(0, 0, 0));
         jCheckBox_nonprocess.setText("Chưa xử lý");
+        jCheckBox_nonprocess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox_nonprocessActionPerformed(evt);
+            }
+        });
 
         jButton1.setBackground(new java.awt.Color(0, 102, 255));
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -268,6 +290,46 @@ public class ViolationGUI extends javax.swing.JPanel {
             model.addRow(new Object[]{violation.getViolationId(), violation.getMemberId(), violation.getMember().getHoTen(), violation.getHadlingType(), violation.getFine(), violation.getStatus()});
         }
     }
+
+    public ArrayList<Violation> readExcelFile() {
+        ArrayList<Violation> violations = new ArrayList<>();
+
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            int option = fileChooser.showOpenDialog(null);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                FileInputStream fis = new FileInputStream(selectedFile);
+
+                Workbook workbook = WorkbookFactory.create(fis);
+                org.apache.poi.ss.usermodel.Sheet sheet = workbook.getSheetAt(0);
+
+                for (Row row : sheet) {
+                    // Bỏ qua dòng tiêu đề
+                    if (row.getRowNum() == 0) {
+                        continue;
+                    }
+
+                    Integer violationId = (int) row.getCell(0).getNumericCellValue();
+                    Integer memberId = (int) row.getCell(1).getNumericCellValue();
+                    String handlingType = row.getCell(2).getStringCellValue();
+                    Integer fine = (int) row.getCell(3).getNumericCellValue();
+                    java.util.Date handlingDate = row.getCell(4).getDateCellValue();
+                    java.sql.Date sqlDate = new java.sql.Date(handlingDate.getTime());
+                    Integer status = (int) row.getCell(5).getNumericCellValue();
+
+                    Violation violation = new Violation(violationId, memberId, handlingType, fine, sqlDate, status);
+                    violations.add(violation);
+                }
+                workbook.close();
+                fis.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return violations;
+    }
     private void jButton_AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddActionPerformed
         Violation_AddGUI violation_AddGUI = new Violation_AddGUI();
         violation_AddGUI.setVisible(true);
@@ -301,8 +363,41 @@ public class ViolationGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton_DeleteActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        ArrayList<Violation> excelList = new ArrayList<>();
+        excelList = readExcelFile();
+        ViolationExcelGUI violationExcelGUI = new ViolationExcelGUI(excelList);
+        violationExcelGUI.setVisible(true);
+
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jCheckBox_processedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_processedActionPerformed
+        ArrayList<Violation> list = new ArrayList<>();
+        for (Violation violation : listViolation) {
+            if (violation.getStatus() == 1) {
+                list.add(violation);
+            }
+        }
+        loadDataToTable(list);
+        tableCustomizer();
+    }//GEN-LAST:event_jCheckBox_processedActionPerformed
+
+    private void jCheckBox_nonprocessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox_nonprocessActionPerformed
+        ArrayList<Violation> list = new ArrayList<>();
+        for (Violation violation : listViolation) {
+            if (violation.getStatus() == 0) {
+                list.add(violation);
+            }
+        }
+        loadDataToTable(list);
+        tableCustomizer();
+    }//GEN-LAST:event_jCheckBox_nonprocessActionPerformed
+
+    private void jTextField_SearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField_SearchKeyReleased
+        DefaultTableModel model = (DefaultTableModel) jTable_Violation.getModel();
+        TableRowSorter<DefaultTableModel> obj = new TableRowSorter<>(model);
+        jTable_Violation.setRowSorter(obj);
+        obj.setRowFilter(RowFilter.regexFilter("(?i)" + jTextField_Search.getText()));
+    }//GEN-LAST:event_jTextField_SearchKeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
