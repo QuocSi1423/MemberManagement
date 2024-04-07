@@ -90,7 +90,7 @@ public class ViolationGUI extends javax.swing.JPanel {
         jButton_Add.setBackground(new java.awt.Color(255, 0, 0));
         jButton_Add.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButton_Add.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_Add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-plus-18.png"))); // NOI18N
+        jButton_Add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images/icons8-plus-18.png"))); // NOI18N
         jButton_Add.setText("Thêm vi phạm");
         jButton_Add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,7 +181,7 @@ public class ViolationGUI extends javax.swing.JPanel {
         jButton2.setBackground(new java.awt.Color(51, 51, 51));
         jButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-reload-18_w.png"))); // NOI18N
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUI/images/icons8-reload-18_w.png"))); // NOI18N
         jButton2.setText("Làm mới");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
