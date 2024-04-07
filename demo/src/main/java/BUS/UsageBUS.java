@@ -47,6 +47,14 @@ public class UsageBUS {
             throw e;
         }
     }
+    
+    public List<Usage> GetBorrowingListByMemberId(Integer memberId) {
+        try {
+            return store.getBorrowingListByMemberId(memberId);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
     public List<Usage> GetEntryList(Date startDate, Date endDate) {
         try {
