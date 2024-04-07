@@ -4,7 +4,9 @@
  */
 package GUI;
 
+import BUS.MemberBUS;
 import BUS.ViolationBUS;
+import Entity.Member;
 import Entity.Violation;
 import java.awt.Color;
 import java.awt.Component;
@@ -28,15 +30,17 @@ import javax.swing.table.JTableHeader;
 public class ViolationExcelGUI extends javax.swing.JFrame {
 
     ArrayList<Violation> violations = new ArrayList<>();
-    ArrayList<Violation> list = new ArrayList<>();
+    ArrayList<Violation> successList = new ArrayList<>();
     ViolationBUS violationBUS = new ViolationBUS();
+    MemberBUS memberBUS = new MemberBUS();
+    Member member = new Member();
 
     public ViolationExcelGUI(ArrayList<Violation> list) {
         initComponents();
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         this.violations = list;
-        loadDataToTable(list);
+        loadDataToTable(violations);
         tableCustomizer();
 
     }
@@ -168,8 +172,24 @@ public class ViolationExcelGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_AddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddActionPerformed
-        for (Violation violation : list) {
-            violationBUS.CreateViolation(violation);
+        int success = 0;
+        int errors = 0;
+        ArrayList<Violation> listErr = new ArrayList<>();
+        for (Violation violation : successList) {
+            try {
+                violationBUS.CreateViolation(violation);
+                success++;
+            } catch (Exception e) {
+                errors++;
+                listErr.add(violation);
+            }
+        }
+        if (errors > 0) {
+            JOptionPane.showMessageDialog(this, "Thêm thành công " + success + "\nThêm thất bại " + errors + "\nNhững dữ liệu thêm thất bại hiển thị trong bảng!");
+            loadDataToTable(listErr);
+            tableCustomizer();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm thành công!");
         }
     }//GEN-LAST:event_jButton_AddActionPerformed
 
@@ -209,8 +229,8 @@ public class ViolationExcelGUI extends javax.swing.JFrame {
         jTable_Violation.getColumnModel().getColumn(0).setPreferredWidth(40);
     }
 
-    private void loadDataToTable(ArrayList<Violation> list) {
-        Collections.sort(list, Comparator.comparingInt(Violation::getViolationId));
+    private void loadDataToTable(ArrayList<Violation> listExcel) {
+        Collections.sort(listExcel, Comparator.comparingInt(Violation::getViolationId));
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Mã vi phạm");
         model.addColumn("Mã thành viên");
@@ -219,12 +239,13 @@ public class ViolationExcelGUI extends javax.swing.JFrame {
         model.addColumn("Số tiền");
         model.addColumn("Trạng thái");
         jTable_Violation.setModel(model);
-        for (Violation violation : list) {
+        for (Violation violation : listExcel) {
             try {
-                model.addRow(new Object[]{violation.getViolationId(), violation.getMemberId(), violation.getMember().getHoTen(), violation.getHadlingType(), violation.getFine(), violation.getStatus()});
-                list.add(violation);
+                member = memberBUS.getAMemberWithID(Long.parseLong(violation.getMemberId().toString()));
+                model.addRow(new Object[]{violation.getViolationId(), violation.getMemberId(), member.getHoTen(), violation.getHadlingType(), violation.getFine(), violation.getStatus()});
+                successList.add(violation);
             } catch (Exception e) {
-                System.out.println(e);
+                System.out.println(violation.getMemberId().toString() + "  " + e);
             }
         }
     }

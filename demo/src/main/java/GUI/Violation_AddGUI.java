@@ -256,7 +256,12 @@ public class Violation_AddGUI extends javax.swing.JFrame {
             } else {
                 violation = new Violation(id, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), Integer.parseInt(jTextField_Money.getText()), sqlDate, status);
             }
-            violationBUS.CreateViolation(violation);
+            try {
+                violationBUS.CreateViolation(violation);
+                JOptionPane.showMessageDialog(this, "Thêm thành công!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Thêm thất bại!");
+            }
         }
     }//GEN-LAST:event_jButton_addActionPerformed
 

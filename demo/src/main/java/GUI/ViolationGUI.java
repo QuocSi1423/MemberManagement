@@ -65,6 +65,7 @@ public class ViolationGUI extends javax.swing.JPanel {
         jCheckBox_processed = new javax.swing.JCheckBox();
         jCheckBox_nonprocess = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -177,6 +178,17 @@ public class ViolationGUI extends javax.swing.JPanel {
             }
         });
 
+        jButton2.setBackground(new java.awt.Color(51, 51, 51));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-reload-18_w.png"))); // NOI18N
+        jButton2.setText("Làm mới");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -193,27 +205,30 @@ public class ViolationGUI extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jCheckBox_All)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGap(49, 49, 49)
-                                                .addComponent(jCheckBox_processed)
-                                                .addGap(34, 34, 34)
-                                                .addComponent(jCheckBox_nonprocess)
-                                                .addGap(0, 0, Short.MAX_VALUE)))
-                                        .addGap(112, 112, 112))
+                                        .addComponent(jTextField_Search, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(35, 35, 35)
+                                        .addComponent(jButton1))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel1)
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jTextField_Search, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(35, 35, 35)
-                                                .addComponent(jButton1)))
-                                        .addGap(0, 0, Short.MAX_VALUE)))
-                                .addGap(34, 34, 34)
+                                                .addComponent(jCheckBox_All)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addGap(49, 49, 49)
+                                                        .addComponent(jCheckBox_processed)
+                                                        .addGap(34, 34, 34)
+                                                        .addComponent(jCheckBox_nonprocess)
+                                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                                .addGap(29, 29, 29))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addComponent(jButton2)
+                                        .addGap(8, 8, 8)))
+                                .addGap(0, 34, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton_Add, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jButton_Delete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -224,7 +239,7 @@ public class ViolationGUI extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 125, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,10 +258,12 @@ public class ViolationGUI extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton_Delete, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton_Delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -305,11 +322,9 @@ public class ViolationGUI extends javax.swing.JPanel {
                 org.apache.poi.ss.usermodel.Sheet sheet = workbook.getSheetAt(0);
 
                 for (Row row : sheet) {
-                    // Bỏ qua dòng tiêu đề
                     if (row.getRowNum() == 0) {
                         continue;
                     }
-
                     Integer violationId = (int) row.getCell(0).getNumericCellValue();
                     Integer memberId = (int) row.getCell(1).getNumericCellValue();
                     String handlingType = row.getCell(2).getStringCellValue();
@@ -317,7 +332,6 @@ public class ViolationGUI extends javax.swing.JPanel {
                     java.util.Date handlingDate = row.getCell(4).getDateCellValue();
                     java.sql.Date sqlDate = new java.sql.Date(handlingDate.getTime());
                     Integer status = (int) row.getCell(5).getNumericCellValue();
-
                     Violation violation = new Violation(violationId, memberId, handlingType, fine, sqlDate, status);
                     violations.add(violation);
                 }
@@ -355,9 +369,14 @@ public class ViolationGUI extends javax.swing.JPanel {
 
                 DefaultTableModel model = (DefaultTableModel) jTable_Violation.getModel();
                 int id = Integer.parseInt(model.getValueAt(i, 0).toString());
-                violationBUS.RemoveViolation(id);
-                listViolation = (ArrayList<Violation>) violationBUS.GetViolationListByFilter(null, null, null);
-                loadDataToTable(listViolation);
+                try {
+                    violationBUS.RemoveViolation(id);
+                    listViolation = (ArrayList<Violation>) violationBUS.GetViolationListByFilter(null, null, null);
+                    loadDataToTable(listViolation);
+                    JOptionPane.showMessageDialog(this, "Xóa thành công!");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(this, "Xóa thất bại!");
+                }
             }
         }
     }//GEN-LAST:event_jButton_DeleteActionPerformed
@@ -399,11 +418,17 @@ public class ViolationGUI extends javax.swing.JPanel {
         obj.setRowFilter(RowFilter.regexFilter("(?i)" + jTextField_Search.getText()));
     }//GEN-LAST:event_jTextField_SearchKeyReleased
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        loadDataToTable(listViolation);
+        tableCustomizer();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton_Add;
     private javax.swing.JButton jButton_Delete;
     private javax.swing.JCheckBox jCheckBox_All;

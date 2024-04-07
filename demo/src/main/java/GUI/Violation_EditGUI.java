@@ -103,7 +103,7 @@ public class Violation_EditGUI extends javax.swing.JFrame {
         jButton_add.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton_add.setForeground(new java.awt.Color(255, 255, 255));
         jButton_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-plus-18.png"))); // NOI18N
-        jButton_add.setText("Thêm");
+        jButton_add.setText("Sửa");
         jButton_add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_addActionPerformed(evt);
@@ -141,7 +141,7 @@ public class Violation_EditGUI extends javax.swing.JFrame {
                         .addComponent(jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62)
                         .addComponent(jButton_clean)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
                         .addComponent(jButton_add)))
                 .addGap(225, 225, 225))
         );
