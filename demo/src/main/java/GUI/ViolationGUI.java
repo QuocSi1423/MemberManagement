@@ -419,6 +419,7 @@ public class ViolationGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_jTextField_SearchKeyReleased
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        listViolation = (ArrayList<Violation>) violationBUS.GetViolationListByFilter(null, null, null);
         loadDataToTable(listViolation);
         tableCustomizer();
     }//GEN-LAST:event_jButton2ActionPerformed
