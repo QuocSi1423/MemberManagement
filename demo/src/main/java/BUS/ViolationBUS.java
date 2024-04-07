@@ -46,9 +46,9 @@ public class ViolationBUS{
     }
   }
 
-  public List<Violation> GetViolationListByFilter(Integer status, Date startDate, Date endDate){
+  public List<Violation> GetViolationListByFilter(Integer memberId, Integer status, Date startDate, Date endDate){
     try {
-      return store.getViolationListByFilter(status, startDate, endDate);
+      return store.getViolationListByFilter(memberId, status, startDate, endDate);
     } catch (Exception e) {
       throw e;
     }
