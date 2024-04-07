@@ -35,7 +35,7 @@ public class Usage {
     private Date returnTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV") // Tên cột trong bảng Usage để lưu khóa ngoại
+    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV", insertable = false, updatable = false) 
     private Member member;
 
 

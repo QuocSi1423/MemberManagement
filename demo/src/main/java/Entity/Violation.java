@@ -20,7 +20,7 @@ public class Violation {
 @Column(name = "MaXL")
  private Integer violationId;
 
- @Column(name = "MaTV", insertable = false, updatable = false)
+ @Column(name = "MaTV")
  private Integer memberId;
  
  @Column(name = "HinhThucXL")
@@ -36,7 +36,7 @@ public class Violation {
  private Integer status;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "MaTV")
+  @JoinColumn(name = "MaTV", referencedColumnName = "MaTV", insertable = false, updatable = false)
  private Member member;
 
  public Violation(){
