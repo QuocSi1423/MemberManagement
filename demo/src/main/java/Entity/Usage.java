@@ -19,7 +19,7 @@ public class Usage {
     @Column(name = "MaTT")
     private Integer usageId;
 
-    @Column(name = "MaTV")
+    @Column(name = "MaTV", insertable = false, updatable = false)
     private Integer memberId;
 
     @Column(name = "MaTB")
