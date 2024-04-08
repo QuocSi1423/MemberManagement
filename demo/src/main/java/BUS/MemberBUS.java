@@ -17,6 +17,10 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).insertObject(member);
     }
 
+    public boolean addMultipleMembers(List<Member> members) {
+        return ((MemberDAL) this.memberDAL).addMultipleMembers(members);
+    }
+
     public boolean updateMember(Member member) { // test, done
         return ((MemberDAL) this.memberDAL).updateObject(member);
     }
@@ -36,12 +40,6 @@ public class MemberBUS {
     // khoa, nganh, khoa'
     public boolean deleteMembersByConditions(String khoa, String nganh, String maTVSubstring) {
         return ((MemberDAL) this.memberDAL).deleteMembersByConditions(khoa, nganh, maTVSubstring);
-    }
-
-    public void addManyMembers (List<Member> members) {
-        for (Member member:members) {
-            addMember(member);
-        }
     }
 
     public static void main(String[] args) {

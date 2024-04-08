@@ -43,6 +43,26 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         }
     }
 
+    @SuppressWarnings("finally")
+    public boolean addMultipleMembers(List<Member> members) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            for (Member member : members) {
+                session.save(member);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            transaction.rollback();
+            session.close();
+            return false;
+        } finally {
+            session.close();
+            return true;
+        }
+    }
+
     // Update member information with maTV => test done
     @SuppressWarnings("finally")
     public boolean updateObject(Object obj) {
@@ -58,6 +78,31 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
                 memberToUpdate.setSdt(updatedMember.getSdt());
                 session.update(memberToUpdate);
             }
+            transaction.commit();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            transaction.rollback();
+            session.close();
+            return false;
+        } finally {
+            session.close();
+            return true;
+        }
+    }
+
+    @SuppressWarnings("finally")
+    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaUpdate<Member> updateCriteria = criteriaBuilder.createCriteriaUpdate(Member.class);
+            Root<Member> memberRoot = updateCriteria.from(Member.class);
+
+            updateCriteria.set("maTV", newMaTV); // Set the new maTV value
+            updateCriteria.where(criteriaBuilder.equal(memberRoot.get("maTV"), oldMaTV)); // Update where maTV matches oldMaTV
+
+            session.createQuery(updateCriteria).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
