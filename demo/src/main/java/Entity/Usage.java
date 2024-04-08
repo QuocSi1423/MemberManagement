@@ -35,7 +35,7 @@ public class Usage {
     private Date returnTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV", insertable = true, updatable = true) 
+    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV", insertable = false, updatable = false) 
     private Member member;
 
 
@@ -53,9 +53,6 @@ public class Usage {
         this.entryTime = entryTime;
         this.borrowingTime = borrowingTime;
         this.returnTime = returnTime;
-        Member mem = new Member();
-        mem.setMaTV(memberId);
-        this.member = mem;
     }
 
     public Integer getUsageId() {
@@ -72,9 +69,6 @@ public class Usage {
 
     public void setMemberId(Integer memberId) {
         this.memberId = memberId;
-        Member mem = new Member();
-        mem.setMaTV(memberId);
-        this.member = mem;
     }
 
     public Integer getEquipmentId() {
