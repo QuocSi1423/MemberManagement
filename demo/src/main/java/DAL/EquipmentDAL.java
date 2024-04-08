@@ -2,18 +2,13 @@ package DAL;
 
 import java.util.ArrayList;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.google.protobuf.LazyStringArrayList;
 
 import Entity.Equipment;
 
-import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.*;
 
 public class EquipmentDAL implements IObjectDAL, IEquipmentDAL{

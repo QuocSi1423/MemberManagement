@@ -84,4 +84,8 @@ public class Member {
     public void setSdt(int sdt) {
         this.sdt = sdt;
     }
+
+    void setMaTV(Integer memberId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
