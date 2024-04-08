@@ -35,7 +35,7 @@ public class Usage {
     private Date returnTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV", insertable = false, updatable = false) 
+    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV") 
     private Member member;
 
 
