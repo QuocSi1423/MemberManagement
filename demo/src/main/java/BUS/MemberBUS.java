@@ -25,6 +25,10 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).updateObject(member);
     }
 
+    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) { // test, done
+        return ((MemberDAL) this.memberDAL).updateMemberMaTV(oldMaTV, newMaTV);
+    }
+
     public boolean removeMember(Long maTV) { // test, done
         return ((MemberDAL) this.memberDAL).removeObject(maTV);
     }
