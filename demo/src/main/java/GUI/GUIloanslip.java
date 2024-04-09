@@ -4,19 +4,26 @@
  */
 package GUI;
 
+import BUS.EquitmentBUS;
+import BUS.MemberBUS;
 import BUS.UsageBUS;
+import DAL.EquipmentDAL;
 import DAL.UsageDAL;
 import Entity.Member;
+import Entity.Equipment;
 import Entity.Usage;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import static java.util.Collections.list;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -28,6 +35,11 @@ public class GUIloanslip extends javax.swing.JFrame {
      */
     UsageDAL use= new UsageDAL();
     UsageBUS usebus= new UsageBUS(use);
+    MemberBUS memberbus= new MemberBUS();
+    EquipmentDAL equipmentDAL =new EquipmentDAL();
+    EquitmentBUS equitment = new EquitmentBUS(equipmentDAL);
+    String ten ="";
+    String tentbi="";
     public GUIloanslip() {
         initComponents();
     }
@@ -39,32 +51,72 @@ public class GUIloanslip extends javax.swing.JFrame {
         
         
     }
-   public void add() {
+    public void addtenm() {
+    String manvien = manv.getText();
+
+    try {
+        Member member = memberbus.getAMemberWithID(Long.valueOf(manvien));
+        ten = member.getHoTen();
+        // Các xử lý khác khi lấy được dữ liệu
+    } catch (Exception e) {
+        // Xử lý ngoại lệ và hiển thị thông báo lỗi
+        JOptionPane.showMessageDialog(null, "Sai mã : " );
+        return;
+    }
+}
+     public void addtentb() {
+    String Matb = matb.getText();
+
+    try {
+        Equipment tb = equitment.getAnObjectByID(Long.valueOf(Matb));
+        tentbi = tb.getTenTB();
+        // Các xử lý khác khi lấy được dữ liệu
+    } catch (Exception e) {
+        // Xử lý ngoại lệ và hiển thị thông báo lỗi
+        JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu thành viên: " );
+        return;
+    }
+     }
+     public Integer generateNewId(List<Integer> existingIds) {
+            Random random = new Random();
+            Integer newId;
+
+            do {
+                // Tạo số ngẫu nhiên cho newId
+                newId = random.nextInt();
+
+                // Kiểm tra xem newId đã tồn tại trong danh sách existingIds chưa
+            } while (existingIds.contains(newId));
+
+            return newId;
+        }
+public void add() {
     String manvien = manv.getText();
     String Hoten = hoten.getText();
     String Matb = matb.getText();
     String Tentb = tentb.getText();
 
-    LocalDateTime currentTime = LocalDateTime.now();
-     java.util.Date currentDate = Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant());
+    if (manvien.isEmpty() || Hoten.isEmpty() || Matb.isEmpty() || Tentb.isEmpty()) {
+        // Một trong các trường dữ liệu rỗng, hiển thị thông báo lỗi
+        JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin.");
+    } else {
+        LocalDateTime currentTime = LocalDateTime.now();
+        java.util.Date currentDate = Date.from(currentTime.atZone(ZoneId.systemDefault()).toInstant());
+        java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
+          List<Usage> listtemp = usebus.GetEntryList(null, null);
+          ArrayList<Integer> listemp= new ArrayList<>();
+          for (Usage usage1 : listtemp){
+              listemp.add(usage1.getUsageId());
+          }
+          int id=generateNewId(listemp);
+          
+        Usage usage = new Usage(id, Integer.valueOf(manvien), Integer.valueOf(Matb), null, sqlDate, null);
+        usebus.CreateUsage(usage);
+        JOptionPane.showMessageDialog(null, "Thành công");
+    }
+}
 
-    java.sql.Date sqlDate = new java.sql.Date(currentDate.getTime());
-    
-    Usage usage = new Usage(5, 1120150184, 1000001, null, null, null);
-    
-    usebus.CreateUsage(usage);
-    
-    List<Usage> a= usebus.GetEntryList(null,null);
-        for (Usage usage1 : a) {
-            System.out.println("Usage ID: " + usage1.getUsageId());
-            System.out.println("Member ID: " + usage1.getMemberId());
-            System.out.println("Equipment ID: " + usage1.getEquipmentId());
-            System.out.println("Entry Time: " + usage1.getEntryTime());
-            System.out.println("Borrowing Time: " + usage1.getBorrowingTime());
-            System.out.println("Return Time: " + usage1.getReturnTime());
-            System.out.println("-------------------------");
-        }}
-    
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -87,6 +139,7 @@ public class GUIloanslip extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -99,8 +152,18 @@ public class GUIloanslip extends javax.swing.JFrame {
         manv.setBackground(new java.awt.Color(255, 255, 255));
 
         tentb.setBackground(new java.awt.Color(204, 204, 204));
+        tentb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tentbMouseClicked(evt);
+            }
+        });
 
         hoten.setBackground(new java.awt.Color(204, 204, 204));
+        hoten.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                hotenMouseClicked(evt);
+            }
+        });
 
         matb.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -139,6 +202,15 @@ public class GUIloanslip extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(255, 255, 255));
+        jButton3.setForeground(new java.awt.Color(0, 0, 0));
+        jButton3.setText("Thoát");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -148,25 +220,28 @@ public class GUIloanslip extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(169, 169, 169)
                         .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1)
-                            .addGap(20, 20, 20)
-                            .addComponent(jButton2))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                            .addGap(80, 80, 80)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel5)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4))
-                            .addGap(28, 28, 28)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(matb, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(tentb, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(hoten, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(manv, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(80, 80, 80)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)
+                                .addGap(2, 2, 2))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addGap(28, 28, 28)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(matb, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(tentb, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(hoten, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(manv, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(106, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -193,7 +268,8 @@ public class GUIloanslip extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
@@ -201,9 +277,7 @@ public class GUIloanslip extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 3, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,6 +299,23 @@ public class GUIloanslip extends javax.swing.JFrame {
         add();
                 
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void hotenMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hotenMouseClicked
+        // TODO add your handling code here:
+        addtenm();
+        hoten.setText(ten);
+    }//GEN-LAST:event_hotenMouseClicked
+
+    private void tentbMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tentbMouseClicked
+        // TODO add your handling code here:
+        addtentb();
+        tentb.setText(tentbi);
+    }//GEN-LAST:event_tentbMouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton3MouseClicked
 
     /**
      * @param args the command line arguments
@@ -266,6 +357,7 @@ public class GUIloanslip extends javax.swing.JFrame {
     private javax.swing.JTextField hoten;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

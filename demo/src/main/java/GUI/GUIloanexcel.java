@@ -3,10 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package GUI;
+import BUS.UsageBUS;
+import DAL.UsageDAL;
 import Entity.Usage;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.File;
@@ -23,6 +24,15 @@ public class GUIloanexcel extends javax.swing.JFrame {
     /**
      * Creates new form GUIloanexcel
      */
+ArrayList<Usage> usageList = new ArrayList<>();
+UsageDAL use= new UsageDAL();
+    UsageBUS usebus= new UsageBUS(use);
+public void addexcel(){
+    for (Usage usagex : usageList) {
+         Usage usage = new Usage(usagex.getUsageId(), usagex.getMemberId(),usagex.getEquipmentId(), usagex.getEntryTime(), usagex.getBorrowingTime(),usagex.getReturnTime());
+         usebus.CreateUsage(usage);
+    }
+}
 public void dataexcel() {
     JFileChooser fileChooser = new JFileChooser();
     int result = fileChooser.showOpenDialog(null);
@@ -39,7 +49,7 @@ public void dataexcel() {
             DefaultTableModel tableModel = (DefaultTableModel) jtable.getModel();
             tableModel.setRowCount(0);
 
-            ArrayList<Usage> usageList = new ArrayList<>();
+           
 
             for (int r = 1; r < rowCount; r++) {
                 Row row = sheet.getRow(r);
@@ -122,11 +132,21 @@ public void dataexcel() {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton1.setForeground(new java.awt.Color(0, 0, 0));
         jButton1.setText("Hủy");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(51, 102, 255));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Thêm");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -173,6 +193,16 @@ public void dataexcel() {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        addexcel();
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments

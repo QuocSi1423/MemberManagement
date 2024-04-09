@@ -1,7 +1,6 @@
 package Entity;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,18 +12,15 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "thongtinsd")
-
 public class Usage {
 
     @Id
     @Column(name = "MaTT")
     private Integer usageId;
-    
-    @Column(name = "MaTV", insertable = false, updatable = false)
+
+    @Column(name = "MaTV")
     private Integer memberId;
-    
-    
-    
+
     @Column(name = "MaTB")
     private Integer equipmentId;
 
@@ -37,21 +33,19 @@ public class Usage {
     @Column(name = "TGTra")
     private Date returnTime;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV") 
+     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaTV", referencedColumnName = "MaTV", insertable = false, updatable = false)
     private Member member;
 
-
-    public Usage(int par, String manvien, String Matb, LocalDateTime currentTime, Date a, Date a1) {}
+    public Usage() {
+    }
 
     public Usage(Integer usageId) {
         this.usageId = usageId;
     }
-    public Usage(){
-        
-    }
 
-    public Usage(Integer usageId, Integer memberId, Integer equipmentId, Date entryTime, Date borrowingTime,Date returnTime) {
+    public Usage(Integer usageId, Integer memberId, Integer equipmentId, Date entryTime, Date borrowingTime,
+            Date returnTime) {
         this.usageId = usageId;
         this.memberId = memberId;
         this.equipmentId = equipmentId;
@@ -104,8 +98,15 @@ public class Usage {
         return returnTime;
     }
 
-    public void setReturnTime(Date returningTime) {
-        this.returnTime = returningTime;
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
     }
 
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 }

@@ -274,6 +274,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Th&#xea;m t&#x1eeb; excel"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton4MouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="jButton5">
               <Properties>
@@ -288,6 +291,9 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="+ Phi&#x1ebf;u m&#x1b0;&#x1ee3;n"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jButton5MouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
