@@ -21,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -112,8 +113,20 @@ public class GUipanelinandout extends javax.swing.JFrame {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                     String formattedDate = dateFormat.format(sqlDate);
 
-                    List<Usage> list1 = usebus.GetEntryList(sqlDate, null); // Xử lý ngoại lệ ParseException
-                    adddata(list1);
+                    List<Usage> listtemp = usebus.GetEntryList(null, null);
+                    System.out.println(sqlDate);
+                    List<Usage> borrowingList = new ArrayList<>();
+                    for (Usage usage : listtemp) {
+                        
+                        System.out.println(usage.getEntryTime());
+                        if (String.valueOf(usage.getEntryTime()) == null ? String.valueOf(sqlDate) == null : String.valueOf(usage.getEntryTime()).equals(String.valueOf(sqlDate))) {
+                            borrowingList.add(usage);
+                             System.out.println(usage.getEntryTime());
+                        }
+                    }
+                    
+                    adddata(borrowingList);
+                  
                     // Sử dụng list1 theo nhu cầu
                 
         }   

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -33,6 +34,7 @@ public class GUIpanelborrowandreturn extends javax.swing.JFrame {
     UsageBUS usebus= new UsageBUS(use);
     MemberDAL member = new MemberDAL();
     MemberBUS memberbus= new MemberBUS();
+    private int bienxoa=-1;
     public void all(){
         if(all.isSelected()){
             List<Usage> listtemp = usebus.GetEntryList(null, null);
@@ -123,6 +125,24 @@ public class GUIpanelborrowandreturn extends javax.swing.JFrame {
         });
     }
 }
+    public void clicktable(){
+         int row = jtable.getSelectedRow();
+                // Lấy dữ liệu từ cột 0 của dòng được chọn
+                Object rowData = jtable.getValueAt(row, 0);
+                bienxoa = (int) rowData;
+    }
+    public void delete(){
+        if(bienxoa==-1){
+            JOptionPane.showMessageDialog(null, "unselected");
+        }
+        else{
+        System.out.println(bienxoa);
+        usebus.RemoveUsage(bienxoa);
+        JOptionPane.showMessageDialog(null, "success");
+        List<Usage> listtemp = usebus.GetEntryList(null, null);
+        adddata(listtemp);
+        }
+    } 
     public GUIpanelborrowandreturn() {
         initComponents();
          List<Usage> listtemp = usebus.GetEntryList(null, null);
@@ -199,6 +219,11 @@ public class GUIpanelborrowandreturn extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jtable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jtableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jtable);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -231,8 +256,13 @@ public class GUIpanelborrowandreturn extends javax.swing.JFrame {
         });
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
+        jButton3.setForeground(new java.awt.Color(0, 0, 0));
         jButton3.setText("Xóa phiếu mượn");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(0, 102, 255));
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
@@ -332,6 +362,16 @@ public class GUIpanelborrowandreturn extends javax.swing.JFrame {
         // TODO add your handling code here:
         chua();
     }//GEN-LAST:event_chuaMouseClicked
+
+    private void jtableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtableMouseClicked
+        // TODO add your handling code here:
+        clicktable();
+    }//GEN-LAST:event_jtableMouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        // TODO add your handling code here:
+        delete();
+    }//GEN-LAST:event_jButton3MouseClicked
 
     /**
      * @param args the command line arguments
