@@ -46,7 +46,7 @@ public class UsageDAL implements IUsageDAL {
         try {
             Session session = this.sessionFactory.openSession();
             transaction = session.beginTransaction();
-            session.delete(new Violation(usageId));
+            session.delete(new Usage(usageId));
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
