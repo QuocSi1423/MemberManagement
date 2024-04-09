@@ -88,6 +88,25 @@ public class UsageDAL implements IUsageDAL {
             throw e;
         }
     }
+    
+    @Override
+    public List<Usage> getBorrowingListByMemberId(Integer id) {
+        List<Usage> listBorrowing = null;
+        try {
+            Session session = this.sessionFactory.openSession();
+            
+            String hql = "from Usage where (MaTV = :memberId)";
+
+            listBorrowing = session
+                    .createQuery(hql, Usage.class)
+                    .setParameter("memberId", id)
+                    .list();
+
+            return listBorrowing;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
     @Override
     public List<Usage> getEntryList(Date startDate, Date endDate) {
