@@ -66,6 +66,7 @@ public class ViolationGUI extends javax.swing.JPanel {
         jCheckBox_nonprocess = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton_Edit = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setForeground(new java.awt.Color(255, 255, 255));
@@ -189,6 +190,16 @@ public class ViolationGUI extends javax.swing.JPanel {
             }
         });
 
+        jButton_Edit.setBackground(new java.awt.Color(51, 51, 51));
+        jButton_Edit.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jButton_Edit.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_Edit.setText("Sửa vi phạm");
+        jButton_Edit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_EditActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -207,7 +218,8 @@ public class ViolationGUI extends javax.swing.JPanel {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(jTextField_Search, javax.swing.GroupLayout.PREFERRED_SIZE, 540, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(35, 35, 35)
-                                        .addComponent(jButton1))
+                                        .addComponent(jButton1)
+                                        .addGap(0, 34, Short.MAX_VALUE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(layout.createSequentialGroup()
@@ -220,15 +232,13 @@ public class ViolationGUI extends javax.swing.JPanel {
                                                         .addGap(49, 49, 49)
                                                         .addComponent(jCheckBox_processed)
                                                         .addGap(34, 34, 34)
-                                                        .addComponent(jCheckBox_nonprocess)
-                                                        .addGap(0, 0, Short.MAX_VALUE)))
-                                                .addGap(29, 29, 29))
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jLabel1)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                                        .addComponent(jCheckBox_nonprocess))))
+                                            .addComponent(jLabel1))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jButton2)
-                                        .addGap(8, 8, 8)))
-                                .addGap(0, 34, Short.MAX_VALUE)
+                                        .addGap(32, 32, 32)
+                                        .addComponent(jButton_Edit, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(29, 29, 29)))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton_Add, javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(jButton_Delete, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))))
@@ -259,9 +269,10 @@ public class ViolationGUI extends javax.swing.JPanel {
                         .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton_Delete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)))
+                            .addComponent(jButton_Delete, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton_Edit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(33, Short.MAX_VALUE))
         );
@@ -363,7 +374,9 @@ public class ViolationGUI extends javax.swing.JPanel {
 
     private void jButton_DeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_DeleteActionPerformed
         int i = jTable_Violation.getSelectedRow();
-        if (i >= 0) {
+        if (i < 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 dòng để xóa!");
+        } else if (i >= 0) {
             int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa vi phạm đã chọn?", "Xóa vi phạm", JOptionPane.YES_NO_OPTION);
             if (result == 0) {
 
@@ -424,6 +437,23 @@ public class ViolationGUI extends javax.swing.JPanel {
         tableCustomizer();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton_EditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_EditActionPerformed
+        int i = jTable_Violation.getSelectedRow();
+        if (i < 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn 1 dòng để sửa!");
+        } else if (i >= 0) {
+            int result = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn sửa vi phạm đã chọn?", "Xóa vi phạm", JOptionPane.YES_NO_OPTION);
+            if (result == 0) {
+
+                DefaultTableModel model = (DefaultTableModel) jTable_Violation.getModel();
+                int id = Integer.parseInt(model.getValueAt(i, 0).toString());
+                int memberid = Integer.parseInt(model.getValueAt(i, 1).toString());
+                Violation_EditGUI violation_EditGUI = new Violation_EditGUI(id, memberid);
+                violation_EditGUI.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_jButton_EditActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -432,6 +462,7 @@ public class ViolationGUI extends javax.swing.JPanel {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton_Add;
     private javax.swing.JButton jButton_Delete;
+    private javax.swing.JButton jButton_Edit;
     private javax.swing.JCheckBox jCheckBox_All;
     private javax.swing.JCheckBox jCheckBox_nonprocess;
     private javax.swing.JCheckBox jCheckBox_processed;

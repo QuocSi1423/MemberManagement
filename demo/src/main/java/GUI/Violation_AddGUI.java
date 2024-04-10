@@ -119,7 +119,6 @@ public class Violation_AddGUI extends javax.swing.JFrame {
         jButton_add.setBackground(new java.awt.Color(0, 102, 255));
         jButton_add.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton_add.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-plus-18.png"))); // NOI18N
         jButton_add.setText("Thêm");
         jButton_add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,7 +169,7 @@ public class Violation_AddGUI extends javax.swing.JFrame {
                         .addComponent(jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62)
                         .addComponent(jButton_clear)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                         .addComponent(jButton_add)))
                 .addContainerGap())
         );
@@ -230,7 +229,6 @@ public class Violation_AddGUI extends javax.swing.JFrame {
     private void jButton_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_clearActionPerformed
         jComboBox_Id.setSelectedIndex(-1);
         jTextField_Money.setText("");
-        jTextField_Name.setText("");
         jCheckBox.setSelected(false);
         jDateChooser1.setDate(null);
     }//GEN-LAST:event_jButton_clearActionPerformed

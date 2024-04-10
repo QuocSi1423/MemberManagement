@@ -4,8 +4,19 @@
  */
 package GUI;
 
+import BUS.ViolationBUS;
+import DAL.ViolationDAL;
+import BUS.MemberBUS;
+import Entity.Member;
+import Entity.Violation;
+import static GUI.Violation_AddGUI.isNumber;
 import enums.Punishment;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /**
  *
@@ -13,11 +24,20 @@ import java.util.ArrayList;
  */
 public class Violation_EditGUI extends javax.swing.JFrame {
 
+    ViolationDAL violationDAL = new ViolationDAL();
+    ViolationBUS violationBUS = new ViolationBUS(violationDAL);
+    MemberBUS memberBUS = new MemberBUS();
+    ArrayList<Member> listMember = (ArrayList<Member>) memberBUS.getAllMembers();
+    int violationID;
+    int memberID;
+
     /**
      * Creates new form Violation_EditGUI
      */
-    public Violation_EditGUI() {
+    public Violation_EditGUI(int violationId, int memberId) {
         initComponents();
+        this.violationID = violationId;
+        this.memberID = memberId;
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         loadComboboxData();
@@ -102,7 +122,6 @@ public class Violation_EditGUI extends javax.swing.JFrame {
         jButton_add.setBackground(new java.awt.Color(0, 102, 255));
         jButton_add.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton_add.setForeground(new java.awt.Color(255, 255, 255));
-        jButton_add.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/icons8-plus-18.png"))); // NOI18N
         jButton_add.setText("Sửa");
         jButton_add.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -111,8 +130,18 @@ public class Violation_EditGUI extends javax.swing.JFrame {
         });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
 
         jComboBox_Id.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox_Id.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox_IdItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -141,8 +170,8 @@ public class Violation_EditGUI extends javax.swing.JFrame {
                         .addComponent(jCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(62, 62, 62)
                         .addComponent(jButton_clean)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 47, Short.MAX_VALUE)
-                        .addComponent(jButton_add)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addComponent(jButton_add, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(225, 225, 225))
         );
         jPanel2Layout.setVerticalGroup(
@@ -201,58 +230,93 @@ public class Violation_EditGUI extends javax.swing.JFrame {
     private void jButton_cleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cleanActionPerformed
         jComboBox_Id.setSelectedIndex(-1);
         jTextField_Money.setText("");
-        jTextField_Name.setText("");
         jCheckBox.setSelected(false);
         jDateChooser1.setDate(null);
     }//GEN-LAST:event_jButton_cleanActionPerformed
 
     private void jButton_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_addActionPerformed
-        // TODO add your handling code here:
+        ArrayList<Violation> list = (ArrayList<Violation>) violationBUS.GetViolationListByFilter(null, null, null);
+        Collections.sort(list, Comparator.comparingInt(Violation::getViolationId));
+        if (checkInput() == 1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đủ thông tin!");
+        } else if (checkInput() == 2) {
+            JOptionPane.showMessageDialog(this, "Số tiền phải là số!");
+        } else {
+            Date date = jDateChooser1.getDate();
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+            int status = 0;
+            if (jCheckBox.isSelected()) {
+                status = 1;
+            }
+            Violation violation = new Violation();
+            if (jTextField_Money.getText().isEmpty()) {
+                violation = new Violation(violationID, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), null, sqlDate, status);
+            } else {
+                violation = new Violation(violationID, Integer.parseInt(jComboBox_Id.getSelectedItem().toString()), jComboBox1.getSelectedItem().toString(), Integer.parseInt(jTextField_Money.getText()), sqlDate, status);
+            }
+            try {
+                violationBUS.ChangeStatusOfViolation(violation);
+                JOptionPane.showMessageDialog(this, "Sửa thành công!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Sửa thất bại!");
+            }
+        }
     }//GEN-LAST:event_jButton_addActionPerformed
+
+    private void jComboBox_IdItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox_IdItemStateChanged
+        for (Member member : listMember) {
+            if (jComboBox_Id.getSelectedIndex() >= 0) {
+                if (jComboBox_Id.getSelectedItem().toString().equals(member.getMaTV().toString())) {
+                    jTextField_Name.setText(member.getHoTen());
+                }
+            }
+        }
+    }//GEN-LAST:event_jComboBox_IdItemStateChanged
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        if (jComboBox1.getSelectedIndex() == 1 || jComboBox1.getSelectedIndex() == 2 || jComboBox1.getSelectedIndex() == 5) {
+            jTextField_Money.setText("");
+            jTextField_Money.setEditable(false);
+        } else if (jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) {
+            jTextField_Money.setEditable(true);
+        }
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Violation_EditGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Violation_EditGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Violation_EditGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Violation_EditGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Violation_EditGUI().setVisible(true);
-            }
-        });
-    }
-
     private void loadComboboxData() {
+        jComboBox1.removeAllItems();
+        jComboBox_Id.removeAllItems();
+
         Punishment punishment = new Punishment();
         ArrayList<String> list = punishment.getPunishment();
-        jComboBox1.removeAllItems();
         for (String string : list) {
             jComboBox1.addItem(string);
         }
+        int count = 0;
+        int mock = 0;
+        for (Member member : listMember) {
+            jComboBox_Id.addItem(member.getMaTV().toString());
+            if (member.getMaTV() == memberID) {
+                mock = count;
+            }
+            count++;
+        }
+        jTextField_Name.setText(listMember.get(0).getHoTen());
+        jComboBox_Id.setSelectedIndex(mock);
+    }
+
+    private int checkInput() {
+        if (jComboBox_Id.getSelectedIndex() < 0 || jTextField_Name.getText().isEmpty() || ((JTextField) jDateChooser1.getDateEditor().getUiComponent()).getText().isEmpty()) {
+            return 1;
+        } else if ((jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) && jTextField_Money.getText().isEmpty()) {
+            return 1;
+        }
+        if ((jComboBox1.getSelectedIndex() == 0 || jComboBox1.getSelectedIndex() == 3 || jComboBox1.getSelectedIndex() == 4) && !isNumber(jTextField_Money.getText())) {
+            return 2;
+        }
+        return 0;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
