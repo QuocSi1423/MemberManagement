@@ -77,19 +77,20 @@ public class GUIloanslip extends javax.swing.JFrame {
         return;
     }
      }
-     public Integer generateNewId(List<Integer> existingIds) {
-            Random random = new Random();
-            Integer newId;
+    public Integer generateNewId(List<Integer> existingIds) {
+     Random random = new Random();
+     Integer newId;
+     int bound = Integer.MAX_VALUE;
 
-            do {
-                // Tạo số ngẫu nhiên cho newId
-                newId = random.nextInt();
+     do {
+         // Tạo số ngẫu nhiên cho newId trong khoảng từ 0 đến Integer.MAX_VALUE
+         newId = random.nextInt(bound);
 
-                // Kiểm tra xem newId đã tồn tại trong danh sách existingIds chưa
-            } while (existingIds.contains(newId));
+         // Kiểm tra xem newId đã tồn tại trong danh sách existingIds chưa
+     } while (existingIds.contains(newId));
 
-            return newId;
-        }
+     return newId;
+ }
 public void add() {
     String manvien = manv.getText();
     String Hoten = hoten.getText();

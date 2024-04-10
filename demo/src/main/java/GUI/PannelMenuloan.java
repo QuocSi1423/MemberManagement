@@ -4,6 +4,8 @@
  */
 package GUI;
 
+import java.awt.GridLayout;
+
 /**
  *
  * @author Thinkbook 14 G3
@@ -13,8 +15,35 @@ public class PannelMenuloan extends javax.swing.JPanel {
     /**
      * Creates new form PannelMenuloan
      */
+    PanelLoan a = new PanelLoan();
+    PannalCheckin b = new PannalCheckin();
+
+    public void bat() {
+        a.setVisible(false);
+        
+        // Thực hiện các sửa đổi:
+        pn.removeAll();
+        pn.add(b);
+        b.setVisible(true);
+        pn.revalidate();
+        pn.repaint();
+    }
+      public void batmuon() {
+        b.setVisible(false);
+        
+        // Thực hiện các sửa đổi:
+        pn.removeAll();
+        pn.add(a);
+        a.setVisible(true);
+        pn.revalidate();
+        pn.repaint();
+    }
+
     public PannelMenuloan() {
         initComponents();
+        pn.setLayout(new GridLayout(1, 1));
+        pn.add(a);
+        a.setVisible(true);
     }
 
     /**
@@ -29,7 +58,7 @@ public class PannelMenuloan extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        mainpanal = new javax.swing.JPanel();
+        pn = new javax.swing.JPanel();
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -38,11 +67,21 @@ public class PannelMenuloan extends javax.swing.JPanel {
         jButton7.setForeground(new java.awt.Color(0, 0, 0));
         jButton7.setText("Mượn Trả");
         jButton7.setVerifyInputWhenFocusTarget(false);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setBackground(new java.awt.Color(255, 255, 255));
         jButton8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jButton8.setForeground(new java.awt.Color(0, 0, 0));
         jButton8.setText("Vào Ra");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -60,16 +99,16 @@ public class PannelMenuloan extends javax.swing.JPanel {
             .addComponent(jButton8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        mainpanal.setBackground(new java.awt.Color(255, 255, 255));
+        pn.setBackground(new java.awt.Color(255, 255, 255));
 
-        javax.swing.GroupLayout mainpanalLayout = new javax.swing.GroupLayout(mainpanal);
-        mainpanal.setLayout(mainpanalLayout);
-        mainpanalLayout.setHorizontalGroup(
-            mainpanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnLayout = new javax.swing.GroupLayout(pn);
+        pn.setLayout(pnLayout);
+        pnLayout.setHorizontalGroup(
+            pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        mainpanalLayout.setVerticalGroup(
-            mainpanalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        pnLayout.setVerticalGroup(
+            pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 506, Short.MAX_VALUE)
         );
 
@@ -79,7 +118,7 @@ public class PannelMenuloan extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(mainpanal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -88,25 +127,26 @@ public class PannelMenuloan extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(mainpanal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+        batmuon();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        bat();
+    }//GEN-LAST:event_jButton8ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel mainpanal;
+    private javax.swing.JPanel pn;
     // End of variables declaration//GEN-END:variables
 }

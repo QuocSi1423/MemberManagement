@@ -10,7 +10,10 @@ import DAL.MemberDAL;
 import DAL.UsageDAL;
 import Entity.Member;
 import Entity.Usage;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -19,12 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
 /**
@@ -41,6 +47,28 @@ public class PanelLoan extends javax.swing.JPanel {
     MemberDAL member = new MemberDAL();
     MemberBUS memberbus= new MemberBUS();
     private int bienxoa=-1;
+    private void tableCustomizer() {
+        JTableHeader header = jtable.getTableHeader();
+        header.setPreferredSize(new Dimension(header.getPreferredSize().width, 40));
+        header.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBorder(BorderFactory.createLineBorder(Color.black));
+                setHorizontalAlignment(JLabel.CENTER);
+                return this;
+            }
+        };
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        jtable.setDefaultRenderer(String.class, centerRenderer);
+        headerRenderer.setBackground(Color.BLUE);
+        headerRenderer.setForeground(Color.WHITE);
+        for (int i = 0; i < jtable.getModel().getColumnCount(); i++) {
+            
+           jtable.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }
+    }
     public void themmuon() throws IOException{
            GUIloanslip a= new GUIloanslip();
            a.setVisible(true);
@@ -127,7 +155,7 @@ public class PanelLoan extends javax.swing.JPanel {
                          adddata(listtemp);
                         JOptionPane.showMessageDialog(null, "Trả thành công");
                     } catch (Exception ex) {
-                        Logger.getLogger(GUIpanelborrowandreturn.class.getName()).log(Level.SEVERE, null, ex);
+                       
                     }
                     
                 }
@@ -154,6 +182,7 @@ public class PanelLoan extends javax.swing.JPanel {
             usage1.getReturnTime(),
             coNgayTra
         });
+        tableCustomizer();
     }
 }
     public void clicktable(){
@@ -178,6 +207,7 @@ public class PanelLoan extends javax.swing.JPanel {
         initComponents();
         List<Usage> listtemp = usebus.GetEntryList(null, null);
         adddata(listtemp);
+        
     }
 
     /**
@@ -200,6 +230,7 @@ public class PanelLoan extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jLabel2.setText("jLabel2");
 
@@ -282,6 +313,13 @@ public class PanelLoan extends javax.swing.JPanel {
             }
         });
 
+        jButton1.setText("Làm mới bảng");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -292,11 +330,14 @@ public class PanelLoan extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(all)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tra, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(chua, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(all)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(tra, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chua, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton1))
                         .addGap(18, 18, 18)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -318,7 +359,9 @@ public class PanelLoan extends javax.swing.JPanel {
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
@@ -370,7 +413,7 @@ public class PanelLoan extends javax.swing.JPanel {
             // TODO add your handling code here:
             themmuonexcel();
         } catch (IOException ex) {
-            Logger.getLogger(GUIpanelborrowandreturn.class.getName()).log(Level.SEVERE, null, ex);
+          
         }
     }//GEN-LAST:event_jButton4MouseClicked
 
@@ -379,14 +422,22 @@ public class PanelLoan extends javax.swing.JPanel {
             // TODO add your handling code here:
             themmuon();
         } catch (IOException ex) {
-            Logger.getLogger(GUIpanelborrowandreturn.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
     }//GEN-LAST:event_jButton5MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+         List<Usage> listtemp = usebus.GetEntryList(null, null);
+        adddata(listtemp);
+        
+    }//GEN-LAST:event_jButton1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox all;
     private javax.swing.JCheckBox chua;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
