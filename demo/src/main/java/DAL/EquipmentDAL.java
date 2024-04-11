@@ -1,5 +1,11 @@
 package DAL;
 
+import DAL.IDAL.IEquipmentDAL;
+import DAL.IDAL.IObjectDAL;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -8,13 +14,13 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import com.google.protobuf.LazyStringArrayList;
 
 import Entity.Equipment;
 
 import javax.persistence.criteria.Predicate;
-import DAL.IDAL.*;
 
 public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
 
@@ -38,7 +44,6 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
 
             transaction.commit();
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
             transaction.rollback();
             session.close();
             return false;
@@ -51,17 +56,18 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
     public boolean insertObject(Object obj) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean rs = insertObject(obj, session);
+        transaction.commit();
+        return rs;
+    }
+
+    public boolean insertObject(Object obj, Session session) {
         try {
             Equipment equipment = (Equipment) obj;
             session.save(equipment);
-            transaction.commit();
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
-            transaction.rollback();
-            session.close();
             return false;
         } finally {
-            session.close();
             return true;
         }
     }
@@ -76,7 +82,6 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
             }
             transaction.commit();
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
             transaction.rollback();
             session.close();
             return false;
@@ -96,40 +101,62 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
     }
 
     public ArrayList<Equipment> getAllEquipmentNotBorrowed() {
+        HirbernateUtils sessionFactory = new HirbernateUtils();
         Session session = sessionFactory.getSessionFactory().openSession();
-        try {
-            String query = "SELECT"
-                    + "FROM thietbi"
-                    + "WHERE MaTB NOT IN ("
-                    + "    SELECT MaTB"
-                    + "    FROM thongtinsd"
-                    + "    WHERE TGMuon <= NOW() AND (TGTra > NOW() OR TGTra IS NULL)"
-                    + ")";
-            return (ArrayList<Equipment>) session.createQuery("query").list();
-        } finally {
-            session.close();
-        }
+
+        LocalDateTime thoiDiemHienTai = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(thoiDiemHienTai);
+        Date date = new Date(timestamp.getTime());
+        String hql = "SELECT tb FROM Equipment tb WHERE tb.maTB NOT IN "
+                + "(SELECT tt.equipmentId FROM Usage tt "
+                + "WHERE :thoiDiemHienTai BETWEEN tt.borrowingTime AND tt.returnTime)";
+        Query query = session.createQuery(hql);
+        query.setParameter("thoiDiemHienTai", date);
+        return (ArrayList<Equipment>) query.list();
     }
 
     public ArrayList<Equipment> getAllEquipmentBorrowed() {
+
         Session session = sessionFactory.getSessionFactory().openSession();
-        try {
-            String query = "SELECT thietbi.*"
-                    + "FROM thietbi"
-                    + "INNER JOIN thongtinsd ON thietbi.MaTB = thongtinsd.MaTB"
-                    + "WHERE thongtinsd.TGMuon <= NOW() AND (thongtinsd.TGTra > NOW()"
-                    + "OR thongtinsd.TGTra IS NULL)";
-            return (ArrayList<Equipment>) session.createQuery("query").list();
-        } finally {
-            session.close();
-        }
+
+        String hql = "SELECT tb FROM Equipment tb WHERE tb.maTB IN "
+                + "(SELECT tt.equipmentId FROM Usage tt "
+                + "WHERE :thoiDiemHienTai BETWEEN tt.borrowingTime AND tt.returnTime)";
+
+        LocalDateTime thoiDiemHienTai = LocalDateTime.now();
+        Timestamp timestamp = Timestamp.valueOf(thoiDiemHienTai);
+        Date date = new Date(timestamp.getTime());
+        Query<Equipment> query = session.createQuery(hql, Equipment.class);
+        query.setParameter("thoiDiemHienTai", date);
+
+        return (ArrayList<Equipment>) query.list();
+
     }
 
     public boolean insertList(ArrayList<Equipment> list) {
-        for (Equipment equipmentItem : list) {
-            new EquipmentDAL().insertObject(equipmentItem);
+        Session session = sessionFactory.getSessionFactory().openSession();
+        EquipmentDAL equipmentDAL = new EquipmentDAL();
+        Transaction transaction = session.beginTransaction();
+        try {
+            for (Equipment equipmentItem : list) {
+                Equipment e = equipmentDAL.getAnObjectByID(equipmentItem.getMaTB());
+                if (e == null) {
+                    equipmentDAL.insertObject(equipmentItem, session);
+                } else {
+//                                        equipmentItem.getMaTB();
+
+                    transaction.rollback();
+                    throw new Exception("Khong the them thiet bi do danh sach co thiet bi co ma da duoc tao: " + equipmentItem.getMaTB().toString());
+                }
+            }
+
+        } catch (Exception e) {
+            transaction.rollback();
+            return false;
+            // TODO: handle exception
         }
+        transaction.commit();
+        session.close();
         return true;
     }
-
 }

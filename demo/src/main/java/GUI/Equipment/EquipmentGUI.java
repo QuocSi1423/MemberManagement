@@ -5,6 +5,7 @@
 package GUI.Equipment;
 
 //import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import BUS.EquipmentBUS;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,9 +20,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.*;
 
-import BUS.EquitmentBUS;
 import DAL.EquipmentDAL;
 import Entity.Equipment;
+import GUI.Equipment.PreviewExcel.PreviewExcelListener;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -34,7 +38,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class EquipmentGUI extends JPanel {
 
     private EquipmentDAL equipmentDAL;
-    private EquitmentBUS equipmentBUS;
+    private EquipmentBUS equipmentBUS;
     private ArrayList<Equipment> list;
     private int countBorrowed;
     private ButtonGroup buttonGroup;
@@ -42,13 +46,18 @@ public class EquipmentGUI extends JPanel {
 
     public EquipmentGUI() {
         initComponents();
+        equipmentDAL = new EquipmentDAL();
+        equipmentBUS = new EquipmentBUS(equipmentDAL);
+        
+        list = new ArrayList<>();
+        list.addAll(equipmentBUS.getAllEquipmentBorrowed());
+        list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
+        
         buttonGroup = new ButtonGroup();
         buttonGroup.add(rbAll);
         buttonGroup.add(rbBorrowed);
         buttonGroup.add(rbNoBorrowed);
-        list = new ArrayList<>();
-        equipmentDAL = new EquipmentDAL();
-        equipmentBUS = new EquitmentBUS(equipmentDAL);
+
         countBorrowed = equipmentBUS.getAllEquipmentBorrowed().size();
 
         jPanel2.add(new MyCustomJPanel());
@@ -63,13 +72,29 @@ public class EquipmentGUI extends JPanel {
                 txtGetByName.requestFocusInWindow();
             }
         });
+        
+
+        txtGetByName.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<Equipment> temp = new ArrayList<>();
+                for (Equipment equipment : list) {
+                    if (txtGetByName.getText().contains(equipment.getTenTB()) || txtGetByName.getText().contains(equipment.getMoTaTB()) || txtGetByName.getText().contains(equipment.getMaTB().toString())) {
+                        temp.add(equipment);
+                        System.out.println(equipment.getTenTB());
+                    }                
+                }
+                System.out.println(temp.isEmpty());
+                showTable(temp);
+            }
+        });
 
         jPanel3.add(txtGetByName);
         rbAll.setSelected(true);
-        showTable(0);
+        showTable(list);
     }
 
-    public void showTable(int isBorred) {
+    public void showTable(ArrayList<Equipment> listEquipment) {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -89,35 +114,18 @@ public class EquipmentGUI extends JPanel {
         DefaultTableModel model = (DefaultTableModel) this.table.getModel();
         model.setRowCount(0);
         int i = 0;
-        if (isBorred == 0) {
-            list.addAll(equipmentBUS.getAllEquipmentBorrowed());
-            list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
-            for (Equipment newEq : list) {
-                i++;
-                if (i <= countBorrowed) {
-                    model.addRow(new Object[]{
-                        newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đã mượn"
-                    });
-                } else {
-                    model.addRow(new Object[]{
-                        newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đang trống"
-                    });
-                }
-            }
-        } else if (isBorred == 1) {
-            for (Equipment newEq : list) {
+        for (Equipment newEq : listEquipment) {
+            i++;
+            if (i <= countBorrowed) {
                 model.addRow(new Object[]{
                     newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đã mượn"
                 });
-            }
-        } else {
-            for (Equipment newEq : list) {
+            } else {
                 model.addRow(new Object[]{
                     newEq.getMaTB(), newEq.getTenTB(), newEq.getMoTaTB(), "Đang trống"
                 });
             }
         }
-
     }
 
     public Border createRoundedBorder(Color color, int thickness, int radii, int pointerSize) {
@@ -192,7 +200,7 @@ public class EquipmentGUI extends JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setText("Danh sách thiết bị");
 
-        btnDelete.setBackground(new java.awt.Color(86, 86, 86));
+        btnDelete.setBackground(new java.awt.Color(153, 153, 153));
         btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnDelete.setForeground(new java.awt.Color(255, 255, 255));
         btnDelete.setText("Xóa");
@@ -232,6 +240,11 @@ public class EquipmentGUI extends JPanel {
 
         rbNoBorrowed.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         rbNoBorrowed.setText("Đang trống");
+        rbNoBorrowed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbNoBorrowedActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -302,6 +315,12 @@ public class EquipmentGUI extends JPanel {
 
     private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
         CreateEquipmentGUI create = new CreateEquipmentGUI();
+        create.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosed(WindowEvent e) {
+            refreshList();
+        }
+    });
     }//GEN-LAST:event_btnCreateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -310,60 +329,46 @@ public class EquipmentGUI extends JPanel {
         Long equipmentId = Long.parseLong("" + table.getValueAt(indexRowSelected, 0));
         equipmentBUS.removeObject(equipmentId);
         model.removeRow(indexRowSelected);
+        refreshList();
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        new UpdateEquipmentGUI(Long.parseLong("" + table.getValueAt(table.getSelectedRow(), 0)));
+        UpdateEquipmentGUI update = new UpdateEquipmentGUI(Long.parseLong("" + table.getValueAt(table.getSelectedRow(), 0)));
+        update.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                refreshList();
+            }
+        });
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void rbAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbAllActionPerformed
-        showTable(0);
+        list.clear();
+        list.addAll(equipmentBUS.getAllEquipmentBorrowed());
+        list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
+        showTable(list);
     }//GEN-LAST:event_rbAllActionPerformed
 
     private void rbBorrowedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbBorrowedActionPerformed
-        showTable(1);
+        list.clear();
+        list.addAll(equipmentBUS.getAllEquipmentBorrowed());
+        showTable(list);
     }//GEN-LAST:event_rbBorrowedActionPerformed
 
+    private void rbNoBorrowedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNoBorrowedActionPerformed
+        list.clear();
+        list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
+        showTable(list);
+    }//GEN-LAST:event_rbNoBorrowedActionPerformed
+
     private void btnExcelActionPerformed(java.awt.event.ActionEvent evt) {
-        File excelFile;
-        FileInputStream excelFIS = null;
-        BufferedInputStream excelBIS = null;
-        XSSFWorkbook excelJTableImport = null;
-
-
-        DefaultTableModel model = (DefaultTableModel) this.table.getModel();
-        model.setRowCount(0);
-
-        String defaultCurrentDirectoryPath = "C:\\Users\\luong\\Downloads\\";
-        JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
-        int excelChoose = excelFileChooser.showOpenDialog(null);
-
-        if (excelChoose == JFileChooser.APPROVE_OPTION) {
-            try {
-
-                excelFile = excelFileChooser.getSelectedFile();
-                excelFIS = new FileInputStream(excelFile);
-                excelBIS = new BufferedInputStream(excelFIS);
-
-                excelJTableImport = new XSSFWorkbook(excelBIS);
-                XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
-
-                for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
-                    XSSFRow excelRow = excelSheet.getRow(row);
-                    XSSFCell excelId = excelRow.getCell(0);
-                    XSSFCell excelName = excelRow.getCell(1);
-                    XSSFCell excelDes = excelRow.getCell(2);
-                    model.addRow(new Object[]{
-                        excelId, excelName, excelDes
-                    });
-                }
-
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException ex) {
-                Logger.getLogger(EquipmentGUI.class.getName()).log(Level.SEVERE, null, ex);
+        PreviewExcel pe = new PreviewExcel();
+        pe.setPreviewExcelListener(new PreviewExcelListener() {
+            @Override
+            public void onExcelPreviewClosed() {
+                refreshList();
             }
-        }
+        });
     }
 
     private class CustomRowHeightRenderer extends DefaultTableCellRenderer {
@@ -395,6 +400,14 @@ public class EquipmentGUI extends JPanel {
             TableColumn col = colModel.getColumn(column);
             return component;
         }
+    }
+    
+    public void refreshList() {
+        list.clear();
+        list.addAll(equipmentBUS.getAllEquipmentBorrowed());
+        list.addAll(equipmentBUS.getAllEquipmentNotBorrowed());
+        rbAll.doClick();
+        showTable(list);
     }
 
     public static void main(String[] args) {

@@ -4,9 +4,10 @@
  */
 package GUI.Equipment;
 
-import BUS.EquitmentBUS;
+import BUS.EquipmentBUS;
 import DAL.EquipmentDAL;
 import Entity.Equipment;
+import javax.swing.JFrame;
 
 /**
  *
@@ -14,13 +15,17 @@ import Entity.Equipment;
  */
 public class UpdateEquipmentGUI extends javax.swing.JFrame {
     private Equipment e;
-    private EquitmentBUS eBus;
+    private EquipmentBUS eBus;
     public UpdateEquipmentGUI(Long maTB) {
         initComponents();        
-        eBus = new EquitmentBUS(new EquipmentDAL());
+        eBus = new EquipmentBUS(new EquipmentDAL());
         e = eBus.getAnObjectByID(maTB);
         txtEquipmentName.setText(e.getTenTB());
         txtEquipmentDes.setText(e.getMoTaTB());
+        
+        setVisible(true);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -58,6 +63,7 @@ public class UpdateEquipmentGUI extends javax.swing.JFrame {
         jLabel4.setText("Mô tả");
 
         txtEquipmentDes.setColumns(20);
+        txtEquipmentDes.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         txtEquipmentDes.setRows(5);
         jScrollPane1.setViewportView(txtEquipmentDes);
 
@@ -134,7 +140,7 @@ public class UpdateEquipmentGUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

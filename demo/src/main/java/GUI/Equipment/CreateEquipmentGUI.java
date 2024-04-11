@@ -4,7 +4,7 @@
  */
 package GUI.Equipment;
 
-import BUS.EquitmentBUS;
+import BUS.EquipmentBUS;
 import DAL.EquipmentDAL;
 import Entity.Equipment;
 
@@ -21,14 +21,15 @@ public class CreateEquipmentGUI extends javax.swing.JFrame {
      */
 
     private EquipmentDAL equipmentDAL;
-    private EquitmentBUS equipmentBUS;
+    private EquipmentBUS equipmentBUS;
     public CreateEquipmentGUI() {
         equipmentDAL = new EquipmentDAL();
-        equipmentBUS = new EquitmentBUS(equipmentDAL);
+        equipmentBUS = new EquipmentBUS(equipmentDAL);
         initComponents();
         setVisible(true);
         setSize(775, 450);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -72,6 +73,7 @@ public class CreateEquipmentGUI extends javax.swing.JFrame {
         jLabel4.setText("Mô tả");
 
         txtEquipmentDes.setColumns(20);
+        txtEquipmentDes.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         txtEquipmentDes.setRows(5);
         jScrollPane1.setViewportView(txtEquipmentDes);
 
@@ -158,7 +160,7 @@ public class CreateEquipmentGUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -169,7 +171,6 @@ public class CreateEquipmentGUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        this.dispose();
         Long equipmentId = Long.parseLong(txtEquipmentId.getText());
         Equipment e = equipmentBUS.getAnObjectByID(equipmentId);
         if (e == null) {
@@ -177,8 +178,9 @@ public class CreateEquipmentGUI extends javax.swing.JFrame {
             String equipmentDes = txtEquipmentDes.getText();
             Equipment newEquipment = new Equipment(equipmentId, equipmentName, equipmentDes);
             equipmentBUS.insertObject(newEquipment);
+            this.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Mã sinh viên bị trùng", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Mã thiết bị trùng", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 

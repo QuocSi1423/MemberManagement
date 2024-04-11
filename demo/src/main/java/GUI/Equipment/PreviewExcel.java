@@ -4,6 +4,9 @@
  */
 package GUI.Equipment;
 
+import BUS.EquipmentBUS;
+import DAL.EquipmentDAL;
+import Entity.Equipment;
 import static com.microsoft.schemas.office.excel.STObjectType.Enum.table;
 import org.apache.logging.log4j.core.config.builder.api.Component;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -15,14 +18,18 @@ import javax.swing.table.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.border.Border;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
  *
@@ -30,12 +37,40 @@ import javax.swing.border.Border;
  */
 public class PreviewExcel extends javax.swing.JFrame {
 
-    /**
-     * Creates new form PreviewExcel
-     */
+    private EquipmentBUS eBus;
+    private ArrayList<Equipment> listExcel;
+    private PreviewExcelListener listener;
+
     public PreviewExcel() {
+        eBus = new EquipmentBUS(new EquipmentDAL());
+        listExcel = new ArrayList<>();
+
         initComponents();
+        showTable();
         readFileExcel();
+        setVisible(true);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    }
+    
+    public void setPreviewExcelListener(PreviewExcelListener listener) {
+        this.listener = listener;
+    }
+    
+    
+    public void windowClosed(WindowEvent e) {
+        if (listener != null) {
+            listener.onExcelPreviewClosed();
+        }
+    }
+    
+    @Override
+    public void dispose() {
+        super.dispose();
+        
+        if(listener != null) {
+            listener.onExcelPreviewClosed();
+        }
     }
 
     /**
@@ -67,7 +102,6 @@ public class PreviewExcel extends javax.swing.JFrame {
                 "Mã thiết bị", "Tên thiết bị", "Mô tả", "Trạng thái"
             }
         ));
-        tableExcel.setRowHeight(20);
         jScrollPane1.setViewportView(tableExcel);
 
         btnSave.setBackground(new java.awt.Color(0, 102, 255));
@@ -75,6 +109,11 @@ public class PreviewExcel extends javax.swing.JFrame {
         btnSave.setForeground(new java.awt.Color(255, 255, 255));
         btnSave.setText("Thêm");
         btnSave.setPreferredSize(new java.awt.Dimension(150, 40));
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         btnCancel.setBackground(new java.awt.Color(153, 153, 153));
         btnCancel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -120,8 +159,16 @@ public class PreviewExcel extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        for(Equipment e : listExcel) {
+            System.out.println(e.getTenTB());
+        }
+        eBus.insertList(listExcel);
+        this.dispose();
+    }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
+        this.dispose();
     }
 
     public static void main(String args[]) {
@@ -161,6 +208,7 @@ public class PreviewExcel extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     class CustomTableHeaderRenderer implements TableCellRenderer {
+
         @Override
         public JLabel getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JLabel label = new JLabel(value.toString());
@@ -174,14 +222,17 @@ public class PreviewExcel extends javax.swing.JFrame {
             return label;
         }
     }
-    
+
     public void showTable() {
         JTableHeader header = this.tableExcel.getTableHeader();
         header.setDefaultRenderer(new CustomTableHeaderRenderer());
         Dimension headerPreferredSize = header.getPreferredSize();
         header.setPreferredSize(headerPreferredSize);
+        tableExcel.setShowGrid(true);
+        tableExcel.setGridColor(Color.gray);
+        tableExcel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
     }
-    
+
     private void readFileExcel() {
         File excelFile;
         FileInputStream excelFIS = null;
@@ -205,12 +256,25 @@ public class PreviewExcel extends javax.swing.JFrame {
                 excelJTableImport = new XSSFWorkbook(excelBIS);
                 XSSFSheet excelSheet = excelJTableImport.getSheetAt(0);
 
-                showTable();
+
                 for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
                     XSSFRow excelRow = excelSheet.getRow(row);
+
                     XSSFCell excelId = excelRow.getCell(0);
                     XSSFCell excelName = excelRow.getCell(1);
                     XSSFCell excelDes = excelRow.getCell(2);
+
+                    Long id = (long) excelId.getNumericCellValue();
+                    String name = excelName.getStringCellValue();
+                    String des = excelDes.getStringCellValue();
+
+                    if (id == 0 || name.isEmpty() || des.isEmpty()) {
+                        continue;
+                    }
+
+                    Equipment e = new Equipment(id, name, des);
+                    this.listExcel.add(e);
+                    
                     model.addRow(new Object[]{
                         excelId, excelName, excelDes
                     });
@@ -222,5 +286,9 @@ public class PreviewExcel extends javax.swing.JFrame {
                 Logger.getLogger(EquipmentGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    
+    public interface PreviewExcelListener {
+        void onExcelPreviewClosed();
     }
 }
