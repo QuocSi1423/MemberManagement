@@ -27,6 +27,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.border.Border;
 import org.apache.poi.ss.usermodel.CellType;
@@ -163,7 +164,13 @@ public class PreviewExcel extends javax.swing.JFrame {
         for(Equipment e : listExcel) {
             System.out.println(e.getTenTB());
         }
-        eBus.insertList(listExcel);
+        try {
+            eBus.insertList(listExcel);
+        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        
         this.dispose();
     }//GEN-LAST:event_btnSaveActionPerformed
 

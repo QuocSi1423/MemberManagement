@@ -175,6 +175,7 @@ public class EquipmentGUI extends JPanel {
         btnCreate.setBackground(new java.awt.Color(0, 102, 255));
         btnCreate.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         btnCreate.setForeground(new java.awt.Color(255, 255, 255));
+        btnCreate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons8-plus-24.png"))); // NOI18N
         btnCreate.setText("Thiết bị");
         btnCreate.setPreferredSize(new java.awt.Dimension(150, 40));
         btnCreate.addActionListener(new java.awt.event.ActionListener() {

@@ -133,28 +133,22 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
 
     }
 
-    public boolean insertList(ArrayList<Equipment> list) {
+    public boolean insertList(ArrayList<Equipment> list) throws Exception {
         Session session = sessionFactory.getSessionFactory().openSession();
         EquipmentDAL equipmentDAL = new EquipmentDAL();
         Transaction transaction = session.beginTransaction();
-        try {
             for (Equipment equipmentItem : list) {
                 Equipment e = equipmentDAL.getAnObjectByID(equipmentItem.getMaTB());
                 if (e == null) {
                     equipmentDAL.insertObject(equipmentItem, session);
                 } else {
 //                                        equipmentItem.getMaTB();
-
                     transaction.rollback();
-                    throw new Exception("Khong the them thiet bi do danh sach co thiet bi co ma da duoc tao: " + equipmentItem.getMaTB().toString());
+                    throw new Exception("Không thể thêm thiết bị do danh sách có thiết bị có mã đã được tạo: " + equipmentItem.getMaTB().toString());
                 }
             }
-
-        } catch (Exception e) {
-            transaction.rollback();
-            return false;
-            // TODO: handle exception
-        }
+            
+        
         transaction.commit();
         session.close();
         return true;

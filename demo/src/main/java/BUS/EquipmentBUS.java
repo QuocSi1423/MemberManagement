@@ -47,7 +47,7 @@ public class EquipmentBUS {
         return ((EquipmentDAL) equipmentDAL).getAnObjectByID(objectID);
     }
 
-    public boolean insertList(ArrayList<Equipment> list) {
+    public boolean insertList(ArrayList<Equipment> list) throws Exception {
         return ((EquipmentDAL) equipmentDAL).insertList(list);
     }
 }
