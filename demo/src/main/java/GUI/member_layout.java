@@ -6,6 +6,11 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
@@ -15,9 +20,12 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
+import static sun.jvm.hotspot.HelloWorld.e;
 
 public class member_layout extends javax.swing.JPanel {
+
     // các đối tượng tương tác dữ liệu 
     private MemberBUS memberBUS = new MemberBUS();
     private ArrayList<Member> memberList = new ArrayList<>();
@@ -35,7 +43,7 @@ public class member_layout extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jTextField2 = new javax.swing.JTextField();
+        searchJTF = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -47,13 +55,35 @@ public class member_layout extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         memberInfoTable = new javax.swing.JTable();
 
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clickOutsideJTF(evt);
+            }
+        });
+
         jPanel1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
         jPanel1.setPreferredSize(new java.awt.Dimension(746, 74));
+        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel1MouseClicked(evt);
+            }
+        });
 
-        jTextField2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jTextField2.setText("Tìm kiếm");
-        jTextField2.setToolTipText("");
-        jTextField2.setPreferredSize(new java.awt.Dimension(350, 38));
+        searchJTF.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        searchJTF.setText("Tìm kiếm");
+        searchJTF.setToolTipText("");
+        searchJTF.setFocusable(false);
+        searchJTF.setPreferredSize(new java.awt.Dimension(350, 38));
+        searchJTF.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clickInsideJTF(evt);
+            }
+        });
+        searchJTF.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                searchEnter(evt);
+            }
+        });
 
         jButton1.setBackground(new java.awt.Color(0, 102, 255));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
@@ -82,8 +112,8 @@ public class member_layout extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 200, Short.MAX_VALUE)
+                .addComponent(searchJTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton2)
@@ -94,11 +124,17 @@ public class member_layout extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchJTF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
                     .addComponent(jButton2))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
+
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(86, 86, 86));
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
@@ -247,7 +283,7 @@ public class member_layout extends javax.swing.JPanel {
     private void deleteMemberJButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMemberJButton
         if (this.memberInfoTable.getSelectedRow() != -1) {
             int dialogResult = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn xóa thành viên này?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-            if(dialogResult == JOptionPane.YES_OPTION) {
+            if (dialogResult == JOptionPane.YES_OPTION) {
                 long MaTV = (long) this.memberInfoTable.getValueAt(this.memberInfoTable.getSelectedRow(), 0);
                 if (this.memberBUS.removeMember(MaTV)) {
                     JOptionPane.showMessageDialog(null, "Xóa thành viên thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
@@ -261,6 +297,72 @@ public class member_layout extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_deleteMemberJButton
 
+    private void clickOutsideJTF(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clickOutsideJTF
+        Component component = evt.getComponent();
+        if (!(component instanceof JTextField)) {
+            if (this.searchJTF.getText().isEmpty()) {
+                this.searchJTF.setText("Tìm kiếm");
+                this.searchJTF.setFocusable(false);
+            }
+        }
+    }//GEN-LAST:event_clickOutsideJTF
+
+    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
+        Component component = evt.getComponent();
+        if (!(component instanceof JTextField)) {
+            if (this.searchJTF.getText().isEmpty()) {
+                this.searchJTF.setText("Tìm kiếm");
+                this.searchJTF.setFocusable(false);
+            }
+        }
+    }//GEN-LAST:event_jPanel1MouseClicked
+
+    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+        Component component = evt.getComponent();
+        if (!(component instanceof JTextField)) {
+            if (this.searchJTF.getText().isEmpty()) {
+                this.searchJTF.setText("Tìm kiếm");
+                this.searchJTF.setFocusable(false);
+            }
+        }
+    }//GEN-LAST:event_jPanel2MouseClicked
+
+    private void searchEnter(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchEnter
+        Member member = null;
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (!this.searchJTF.getText().isEmpty()) {
+                String value = this.searchJTF.getText();
+                if (isNumeric(value)) {
+                    long id = Long.parseLong(value);
+                    member = this.memberBUS.getAMemberWithID(id);
+                    this.memberInfoTableModel.setRowCount(0);
+                    if (member != null) {
+                        System.out.println(member.getMaTV());
+                        this.memberInfoTableModel.addRow(new Object[]{
+                            member.getMaTV(),
+                            member.getHoTen(),
+                            member.getKhoa(),
+                            member.getNganh(),
+                            member.getSdt()
+                        });
+                    }
+                } else {
+
+                }
+
+            } else {
+                loadDataToTable();
+            }
+        }
+    }//GEN-LAST:event_searchEnter
+
+    private void clickInsideJTF(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clickInsideJTF
+        this.searchJTF.setFocusable(true);
+        if(!this.searchJTF.getText().isEmpty() || !this.searchJTF.getText().equals("Tìm kiếm")) {
+            this.searchJTF.setText("");
+        }
+    }//GEN-LAST:event_clickInsideJTF
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -273,8 +375,8 @@ public class member_layout extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTable memberInfoTable;
+    private javax.swing.JTextField searchJTF;
     // End of variables declaration//GEN-END:variables
 
     // khởi tạo bảng
@@ -337,6 +439,7 @@ public class member_layout extends javax.swing.JPanel {
     // load dữ liệu lên bảng
     public void loadDataToTable() {
         this.memberList = (ArrayList<Member>) this.memberBUS.getAllMembers();
+        this.searchJTF.setText("Tìm kiếm");
         this.memberInfoTableModel.setRowCount(0);
         for (Member member : memberList) {
             this.memberInfoTableModel.addRow(new Object[]{
@@ -348,14 +451,20 @@ public class member_layout extends javax.swing.JPanel {
             });
         }
     }
-    
+
     public Member getMemberById(long id) {
         Member member = null;
-        for(Member member1 : this.memberList) {
-            if(member1.getMaTV() == id) {
+        for (Member member1 : this.memberList) {
+            if (member1.getMaTV() == id) {
                 member = member1;
             }
         }
         return member;
     }
+
+    // kiểm tra dữ liệu nhập vào có phải là số không
+    public boolean isNumeric(String str) {
+        return str.matches("\\d+");
+    }
+
 }

@@ -131,13 +131,14 @@ public class review_file extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addListJButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addListJButton
-        for(Member member : this.membersList) {
-            if(memberBUS.addMember(member)){
-                continue;
-            } else {
-                JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi import file!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                this.dispose();
-            }
+        if(this.memberBUS.addMultipleMembers(membersList)) {
+            JOptionPane.showMessageDialog(null, "Import file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            this.member_layout.loadDataToTable();
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi import file!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            this.member_layout.loadDataToTable();
+            this.dispose();
         }
         this.member_layout.loadDataToTable();
         this.dispose();
@@ -240,7 +241,6 @@ public class review_file extends javax.swing.JFrame {
                 System.out.println("excelsheet " + excelSheet);
 
                 for (int row = 1; row <= excelSheet.getLastRowNum(); row++) {
-                    System.out.println("row: " + row);
                     XSSFRow excelRow = excelSheet.getRow(row);
                     XSSFCell excelId = excelRow.getCell(0);
                     XSSFCell excelName = excelRow.getCell(1);
@@ -256,12 +256,15 @@ public class review_file extends javax.swing.JFrame {
                     if(id == 0 || name.isEmpty() || faculty.isEmpty() || major.isEmpty() || phone.isEmpty()) {
                         continue;
                     }
-                    Member member = new Member(id, phone, phone, name, name);
+                    Member member = new Member(id, name, faculty, major, phone);
                     this.membersList.add(member);
                     
                     model.addRow(new Object[]{
                         excelId, excelName, excelFaculty, excelMajor, excelPhone
                     });
+                }
+                for(Member member : this.membersList) {
+                    System.out.println(member.getMaTV() + " | " + member.getHoTen() + " | " + member.getKhoa() + " | " + member.getNganh() + " | " + member.getSdt());
                 }
 
             } catch (FileNotFoundException e) {
