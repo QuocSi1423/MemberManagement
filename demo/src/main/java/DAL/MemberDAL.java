@@ -48,19 +48,30 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean addMultipleMembers(List<Member> members) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean success = true;
         try {
             for (Member member : members) {
-                session.save(member);
+                try {
+                    session.save(member);
+                } catch (org.hibernate.exception.ConstraintViolationException e) {
+                    System.err.println("Constraint violated while adding member: " + member.getHoTen());
+                    success = false; 
+                    break;
+                }
             }
-            transaction.commit();
+            if (success) {
+                transaction.commit();
+            } else {
+                System.err.println("Some members failed to be added due to constraint violations.");
+                transaction.rollback();
+            }
         } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
+            System.err.println("Unexpected error occurred: " + e.getMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            success = false;
         } finally {
             session.close();
-            return true;
+            return success;
         }
     }
 
@@ -196,6 +207,22 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } finally {
             session.close();
             return true;
+        }
+    }
+
+    public List<Member> searchMembersByName(String name) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Member> query = criteriaBuilder.createQuery(Member.class);
+            Root<Member> memberRoot = query.from(Member.class);
+    
+            query.select(memberRoot)
+                .where(criteriaBuilder.like(memberRoot.get("hoTen").as(String.class), "%" + name + "%"));
+    
+            return session.createQuery(query).getResultList();
+        } finally {
+            session.close();
         }
     }
 

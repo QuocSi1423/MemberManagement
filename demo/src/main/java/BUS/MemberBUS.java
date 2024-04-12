@@ -46,6 +46,9 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).deleteMembersByConditions(khoa, nganh, maTVSubstring);
     }
 
+    public List<Member> searchMembersByName(String name) {
+        return ((MemberDAL) this.memberDAL).searchMembersByName(name);
+    }
     public static void main(String[] args) {
         // IMemberDAL dal = null;
         MemberBUS bus = new MemberBUS();
