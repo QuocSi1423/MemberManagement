@@ -14,6 +14,9 @@ import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.IMemberDAL;
 import DAL.IDAL.IObjectDAL;
 import Entity.Member;
+import java.util.ArrayList;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 
 public class MemberDAL implements IObjectDAL, IMemberDAL {
 

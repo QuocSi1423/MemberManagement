@@ -131,26 +131,22 @@ public class review_file extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addListJButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addListJButton
-
-        try{
+        if(this.membersList.size() > 0) {
             String result = this.memberBUS.addMultipleMembers(membersList);
-            if(result.equals("Success")) {
+            if(result.equals("")) {
                 JOptionPane.showMessageDialog(null, "Import file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 this.member_layout.loadDataToTable();
                 this.dispose();
             } else {
-                JOptionPane.showMessageDialog(null, result, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Có lỗi ở thành viên có mã là " + result + "!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 this.member_layout.loadDataToTable();
                 this.dispose();
             }
-            
-        } catch(Exception e){
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Danh sách thành viên rỗng!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             this.member_layout.loadDataToTable();
             this.dispose();
         }
-        this.member_layout.loadDataToTable();
-        this.dispose();
     }//GEN-LAST:event_addListJButton
 
     private void destroyJButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_destroyJButton
