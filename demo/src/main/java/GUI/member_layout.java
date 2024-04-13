@@ -19,6 +19,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -328,13 +329,12 @@ public class member_layout extends javax.swing.JPanel {
     }//GEN-LAST:event_jPanel2MouseClicked
 
     private void searchEnter(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_searchEnter
-        Member member = null;
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (!this.searchJTF.getText().isEmpty()) {
                 String value = this.searchJTF.getText();
                 if (isNumeric(value)) {
                     long id = Long.parseLong(value);
-                    member = this.memberBUS.getAMemberWithID(id);
+                    Member member = this.memberBUS.getAMemberWithID(id);
                     this.memberInfoTableModel.setRowCount(0);
                     if (member != null) {
                         System.out.println(member.getMaTV());
@@ -347,9 +347,21 @@ public class member_layout extends javax.swing.JPanel {
                         });
                     }
                 } else {
-
+                    String name = this.searchJTF.getText();
+                    List<Member> memberListByName = this.memberBUS.searchMembersByName(name);
+                    this.memberInfoTableModel.setRowCount(0);
+                    if(memberListByName.size() > 0) {
+                        for(Member member : memberListByName) {
+                            this.memberInfoTableModel.addRow(new Object[]{
+                                member.getMaTV(),
+                                member.getHoTen(),
+                                member.getKhoa(),
+                                member.getNganh(),
+                                member.getSdt()
+                            });
+                        }
+                    }   
                 }
-
             } else {
                 loadDataToTable();
             }
@@ -358,7 +370,7 @@ public class member_layout extends javax.swing.JPanel {
 
     private void clickInsideJTF(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clickInsideJTF
         this.searchJTF.setFocusable(true);
-        if(!this.searchJTF.getText().isEmpty() || !this.searchJTF.getText().equals("Tìm kiếm")) {
+        if (!this.searchJTF.getText().isEmpty() || !this.searchJTF.getText().equals("Tìm kiếm")) {
             this.searchJTF.setText("");
         }
     }//GEN-LAST:event_clickInsideJTF

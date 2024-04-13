@@ -131,12 +131,21 @@ public class review_file extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void addListJButton(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addListJButton
-        if(this.memberBUS.addMultipleMembers(membersList)) {
-            JOptionPane.showMessageDialog(null, "Import file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            this.member_layout.loadDataToTable();
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi import file!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+
+        try{
+            String result = this.memberBUS.addMultipleMembers(membersList);
+            if(result.equals("Success")) {
+                JOptionPane.showMessageDialog(null, "Import file thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                this.member_layout.loadDataToTable();
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, result, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                this.member_layout.loadDataToTable();
+                this.dispose();
+            }
+            
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             this.member_layout.loadDataToTable();
             this.dispose();
         }
@@ -244,6 +253,7 @@ public class review_file extends javax.swing.JFrame {
                     XSSFRow excelRow = excelSheet.getRow(row);
                     XSSFCell excelId = excelRow.getCell(0);
                     XSSFCell excelName = excelRow.getCell(1);
+                    System.out.println(excelName);
                     XSSFCell excelFaculty = excelRow.getCell(2);
                     XSSFCell excelMajor = excelRow.getCell(3);
                     XSSFCell excelPhone = excelRow.getCell(4);

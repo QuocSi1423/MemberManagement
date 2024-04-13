@@ -14,6 +14,7 @@ import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.IMemberDAL;
 import DAL.IDAL.IObjectDAL;
 import Entity.Member;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 
 public class MemberDAL implements IObjectDAL, IMemberDAL {
@@ -45,33 +46,37 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     }
 
     @SuppressWarnings("finally")
-    public boolean addMultipleMembers(List<Member> members) {
+    public String addMultipleMembers(List<Member> members) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        boolean success = true;
+        String result = "";
         try {
             for (Member member : members) {
                 try {
                     session.save(member);
                 } catch (org.hibernate.exception.ConstraintViolationException e) {
-                    System.err.println("Constraint violated while adding member: " + member.getHoTen());
-                    success = false; 
+                    result  = "Constraint violated while adding member: " + member.getHoTen();
+                    System.out.println("Ket qua " + result);
+                    break;
+                } catch(org.hibernate.engine.jdbc.spi.SqlExceptionHelper e) {
+                    result  = "Constraint violated while adding member: " + member.getHoTen();
+                    System.out.println("Ket qua " + result);
                     break;
                 }
             }
-            if (success) {
+            if (result.equals("")) {
                 transaction.commit();
+                result = "Success";
             } else {
-                System.err.println("Some members failed to be added due to constraint violations.");
                 transaction.rollback();
             }
         } catch (Exception e) {
-            System.err.println("Unexpected error occurred: " + e.getMessage());
+//            result = "Unexpected error occurred: " + e.getMessage();
             transaction.rollback();
-            success = false;
         } finally {
             session.close();
-            return success;
+            System.out.println("Ket qua: " + result);
+            return result;
         }
     }
 
