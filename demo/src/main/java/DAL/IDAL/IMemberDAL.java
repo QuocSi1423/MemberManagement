@@ -7,7 +7,7 @@ import Entity.Member;
 public interface IMemberDAL {
     public List<Member> getAllMembers();
     public boolean deleteMembersByConditions(String khoa, String nganh, String maTVSubstring);
-    public boolean addMultipleMembers(List<Member> members);
+    public String addMultipleMembers(List<Member> members);
     public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV);
     public List<Member> searchMembersByName(String name);
 }
