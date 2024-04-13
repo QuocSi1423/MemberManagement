@@ -17,7 +17,7 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).insertObject(member);
     }
 
-    public boolean addMultipleMembers(List<Member> members) {
+    public String addMultipleMembers(List<Member> members) {
         return ((MemberDAL) this.memberDAL).addMultipleMembers(members);
     }
 
