@@ -14,8 +14,6 @@ import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.IMemberDAL;
 import DAL.IDAL.IObjectDAL;
 import Entity.Member;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
 
 public class MemberDAL implements IObjectDAL, IMemberDAL {
 
@@ -31,53 +29,38 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member member = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             session.save(member);
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
-    @SuppressWarnings("finally")
     public String addMultipleMembers(List<Member> members) {
-        Session session = sessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
+        List<Long> addedMemberIds = new ArrayList<Long>(); // in case any issue happens, remove previous records;
+        boolean flag = true;
         String result = "";
-        try {
-            for (Member member : members) {
-                try {
-                    session.save(member);
-                } catch (org.hibernate.exception.ConstraintViolationException e) {
-                    result  = "Constraint violated while adding member: " + member.getHoTen();
-                    System.out.println("Ket qua " + result);
-                    break;
-                } catch(org.hibernate.engine.jdbc.spi.SqlExceptionHelper e) {
-                    result  = "Constraint violated while adding member: " + member.getHoTen();
-                    System.out.println("Ket qua " + result);
-                    break;
-                }
+        for (Member mem : members) {
+            if (!insertObject(mem)) {
+                flag = false;
+                result = mem.getMaTV().toString();
+                break;
             }
-            if (result.equals("")) {
-                transaction.commit();
-                result = "Success";
-            } else {
-                transaction.rollback();
-            }
-        } catch (Exception e) {
-//            result = "Unexpected error occurred: " + e.getMessage();
-            transaction.rollback();
-        } finally {
-            session.close();
-            System.out.println("Ket qua: " + result);
-            return result;
+            addedMemberIds.add(mem.getMaTV());
         }
+        if (flag == false && addedMemberIds.size() > 0) {
+            for (Long id : addedMemberIds) {
+                removeObject(id);
+            }
+        }
+        return result;
     }
 
     // Update member information with maTV => test done
@@ -86,6 +69,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member updatedMember = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToUpdate = session.get(Member.class, updatedMember.getMaTV());
             if (memberToUpdate != null) {
@@ -99,11 +83,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
@@ -111,6 +94,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaUpdate<Member> updateCriteria = criteriaBuilder.createCriteriaUpdate(Member.class);
@@ -124,11 +108,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
@@ -137,6 +120,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean removeObject(Long maTV) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToDelete = session.get(Member.class, maTV);
             if (memberToDelete != null) {
@@ -146,11 +130,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
@@ -179,6 +162,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean deleteMembersByConditions(String khoa, String nganh, String maTVSubstring) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaDelete<Member> deleteCriteria = criteriaBuilder.createCriteriaDelete(Member.class);
@@ -206,12 +190,11 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            session.close();
             System.out.println(e.getLocalizedMessage());
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 

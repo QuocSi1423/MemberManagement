@@ -5,8 +5,6 @@ import java.util.List;
 import DAL.MemberDAL;
 import DAL.IDAL.IMemberDAL;
 import Entity.Member;
-import GUI.member_layout;
-import java.util.ArrayList;
 
 public class MemberBUS {
     private IMemberDAL memberDAL;
@@ -19,7 +17,7 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).insertObject(member);
     }
 
-    public String addMultipleMembers(List<Member> members)throws Exception {
+    public String addMultipleMembers(List<Member> members) {
         return ((MemberDAL) this.memberDAL).addMultipleMembers(members);
     }
 
@@ -51,27 +49,17 @@ public class MemberBUS {
     public List<Member> searchMembersByName(String name) {
         return ((MemberDAL) this.memberDAL).searchMembersByName(name);
     }
-    public static void main(String[] args) throws Exception {
-//        // IMemberDAL dal = null;
-//        MemberBUS bus = new MemberBUS();
-//        bus.deleteMembersByConditions("abc", "abc", "23");
-//        // System.out.println(member.getKhoa());
-//        // bus.removeMember(Long.valueOf("1120330231"));
-//        List<Member> members = bus.getAllMembers();
-//        for (Member mem:members){
-//            System.out.println(mem.getHoTen());
-//        }
+    public static void main(String[] args) {
+        // IMemberDAL dal = null;
+        MemberBUS bus = new MemberBUS();
+        bus.deleteMembersByConditions("abc", "abc", "23");
+        // System.out.println(member.getKhoa());
+        // bus.removeMember(Long.valueOf("1120330231"));
+        List<Member> members = bus.getAllMembers();
+        for (Member mem:members){
+            System.out.println(mem.getHoTen());
+        }
         // Hibernate: 
-        
-        ArrayList<Member> list = new ArrayList<>();
-        Member member1 = new Member(Long.parseLong("6"), "a", "Công nghệ thông tin", "Công nghệ thông tin", "0974344647");
-        Member member2 = new Member(Long.parseLong("7"), "a", "Công nghệ thông tin", "Công nghệ thông tin", "0974344647");
-        Member member3 = new Member(Long.parseLong("8"), "a", "Công nghệ thông tin", "Công nghệ thông tin", "0974344647");
-        list.add(member1);
-        list.add(member2);
-        list.add(member3);
-        MemberBUS memberBUS = new MemberBUS();
-        memberBUS.addMultipleMembers(list);
     }
 
 }
