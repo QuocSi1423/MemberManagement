@@ -1,9 +1,11 @@
 package DAL;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
@@ -14,6 +16,9 @@ import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.IMemberDAL;
 import DAL.IDAL.IObjectDAL;
 import Entity.Member;
+
+import javax.persistence.criteria.CriteriaQuery;
+
 
 public class MemberDAL implements IObjectDAL, IMemberDAL {
 
@@ -29,48 +34,17 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member member = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             session.save(member);
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
-        }
-    }
-
-    @SuppressWarnings("finally")
-    public boolean addMultipleMembers(List<Member> members) {
-        Session session = sessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        boolean success = true;
-        try {
-            for (Member member : members) {
-                try {
-                    session.save(member);
-                } catch (org.hibernate.exception.ConstraintViolationException e) {
-                    System.err.println("Constraint violated while adding member: " + member.getHoTen());
-                    success = false; 
-                    break;
-                }
-            }
-            if (success) {
-                transaction.commit();
-            } else {
-                System.err.println("Some members failed to be added due to constraint violations.");
-                transaction.rollback();
-            }
-        } catch (Exception e) {
-            System.err.println("Unexpected error occurred: " + e.getMessage());
-            transaction.rollback();
-            success = false;
-        } finally {
-            session.close();
-            return success;
+            return result;
         }
     }
 
@@ -80,6 +54,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member updatedMember = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToUpdate = session.get(Member.class, updatedMember.getMaTV());
             if (memberToUpdate != null) {
@@ -93,36 +68,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
-        }
-    }
-
-    @SuppressWarnings("finally")
-    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) {
-        Session session = sessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-            CriteriaUpdate<Member> updateCriteria = criteriaBuilder.createCriteriaUpdate(Member.class);
-            Root<Member> memberRoot = updateCriteria.from(Member.class);
-
-            updateCriteria.set("maTV", newMaTV); // Set the new maTV value
-            updateCriteria.where(criteriaBuilder.equal(memberRoot.get("maTV"), oldMaTV)); // Update where maTV matches oldMaTV
-
-            session.createQuery(updateCriteria).executeUpdate();
-            transaction.commit();
-        } catch (Exception e) {
-            System.out.println(e.getLocalizedMessage());
-            transaction.rollback();
-            session.close();
-            return false;
-        } finally {
-            session.close();
-            return true;
+            return result;
         }
     }
 
@@ -131,6 +80,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean removeObject(Long maTV) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToDelete = session.get(Member.class, maTV);
             if (memberToDelete != null) {
@@ -140,11 +90,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
@@ -173,6 +122,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean deleteMembersByConditions(String khoa, String nganh, String maTVSubstring) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaDelete<Member> deleteCriteria = criteriaBuilder.createCriteriaDelete(Member.class);
@@ -200,8 +150,53 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            session.close();
             System.out.println(e.getLocalizedMessage());
+            result = false;
+        } finally {
+            session.close();
+            return result;
+        }
+    }
+
+    public String addMultipleMembers(List<Member> members) {
+        List<Long> addedMemberIds = new ArrayList<Long>(); // in case any issue happens, remove previous records;
+        boolean flag = true;
+        String result = "";
+        for (Member mem : members) {
+            if (!insertObject(mem)) {
+                flag = false;
+                result = mem.getMaTV().toString();
+                break;
+            }
+            addedMemberIds.add(mem.getMaTV());
+        }
+        if (flag == false && addedMemberIds.size() > 0) {
+            for (Long id : addedMemberIds) {
+                removeObject(id);
+            }
+        }
+        return result;
+    }
+
+
+    @SuppressWarnings("finally")
+    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaUpdate<Member> updateCriteria = criteriaBuilder.createCriteriaUpdate(Member.class);
+            Root<Member> memberRoot = updateCriteria.from(Member.class);
+
+            updateCriteria.set("maTV", newMaTV); // Set the new maTV value
+            updateCriteria.where(criteriaBuilder.equal(memberRoot.get("maTV"), oldMaTV)); // Update where maTV matches oldMaTV
+
+            session.createQuery(updateCriteria).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            transaction.rollback();
+            session.close();
             return false;
         } finally {
             session.close();
@@ -224,8 +219,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
             session.close();
         }
     }
-
+    
     public static void main(String[] args) {
-        
     }
 }
