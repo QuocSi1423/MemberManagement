@@ -47,8 +47,13 @@ public class EquitmentBUS {
         return ((EquipmentDAL) equipmentDAL).getAnObjectByID(objectID);
     }
 
+    public void removeEquipmentByFilter(int type){
+        equipmentDAL.removeEquipmentByFilter(type);
+    }
+
     public static void main(String[] args) {
         EquitmentBUS eBus = new EquitmentBUS(new EquipmentDAL());
-        eBus.insertObject(new Equipment(Long.parseLong("1"), "abc", "abc"));
+        eBus.removeEquipmentByFilter(1);
     }
+
 }
