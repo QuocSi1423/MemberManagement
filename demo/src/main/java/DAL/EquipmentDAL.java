@@ -153,4 +153,25 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL {
         session.close();
         return true;
     }
+    
+    public void removeEquipmentByFilter(int type){
+        Transaction transaction = null;
+        try (Session session = sessionFactory.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaDelete<Equipment> criteriaDelete = builder.createCriteriaDelete(Equipment.class);
+            Root<Equipment> root = criteriaDelete.from(Equipment.class);
+
+            criteriaDelete.where(builder.like(root.get("maTB").as(String.class), type + "%"));
+
+            // Thực hiện xóa
+            int deletedCount = session.createQuery(criteriaDelete).executeUpdate();
+
+            transaction.commit();
+
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 }

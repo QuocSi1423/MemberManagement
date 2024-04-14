@@ -251,7 +251,6 @@ public class PreviewExcel extends javax.swing.JFrame {
 
         String defaultCurrentDirectoryPath = "C:\\Users\\luong\\Downloads\\";
         JFileChooser excelFileChooser = new JFileChooser(defaultCurrentDirectoryPath);
-        System.out.println("excelFileChooser " + excelFileChooser);
         int excelChoose = excelFileChooser.showOpenDialog(null);
 
         if (excelChoose == JFileChooser.APPROVE_OPTION) {

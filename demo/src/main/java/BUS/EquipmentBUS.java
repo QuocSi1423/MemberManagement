@@ -50,4 +50,8 @@ public class EquipmentBUS {
     public boolean insertList(ArrayList<Equipment> list) throws Exception {
         return ((EquipmentDAL) equipmentDAL).insertList(list);
     }
+    
+    public void removeEquipmentByFilter(int type){
+        equipmentDAL.removeEquipmentByFilter(type);
+    }
 }
