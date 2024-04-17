@@ -12,6 +12,6 @@ public interface IViolationDAL {
   public void deleteViolation(Integer id);
   public void changeStatus(Violation violation);
   public Violation getViolation(Integer id);
-  public List<Violation> getViolationListByFilter(Integer status, Date startDate, Date endDate);
+  public List<Violation> getViolationListByFilter(Integer memberId, Integer status, Date startDate, Date endDate);
 
 }

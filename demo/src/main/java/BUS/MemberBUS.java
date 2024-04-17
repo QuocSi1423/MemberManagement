@@ -17,8 +17,16 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).insertObject(member);
     }
 
+    public String addMultipleMembers(List<Member> members) {
+        return ((MemberDAL) this.memberDAL).addMultipleMembers(members);
+    }
+
     public boolean updateMember(Member member) { // test, done
         return ((MemberDAL) this.memberDAL).updateObject(member);
+    }
+
+    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) { // test, done
+        return ((MemberDAL) this.memberDAL).updateMemberMaTV(oldMaTV, newMaTV);
     }
 
     public boolean removeMember(Long maTV) { // test, done
@@ -38,12 +46,9 @@ public class MemberBUS {
         return ((MemberDAL) this.memberDAL).deleteMembersByConditions(khoa, nganh, maTVSubstring);
     }
 
-    public void addManyMembers (List<Member> members) {
-        for (Member member:members) {
-            addMember(member);
-        }
+    public List<Member> searchMembersByName(String name) {
+        return ((MemberDAL) this.memberDAL).searchMembersByName(name);
     }
-
     public static void main(String[] args) {
         // IMemberDAL dal = null;
         MemberBUS bus = new MemberBUS();

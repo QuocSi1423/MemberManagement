@@ -14,6 +14,9 @@ import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.IMemberDAL;
 import DAL.IDAL.IObjectDAL;
 import Entity.Member;
+import java.util.ArrayList;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 
 public class MemberDAL implements IObjectDAL, IMemberDAL {
 
@@ -29,18 +32,38 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member member = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             session.save(member);
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
+    }
+
+    public String addMultipleMembers(List<Member> members) {
+        List<Long> addedMemberIds = new ArrayList<Long>(); // in case any issue happens, remove previous records;
+        boolean flag = true;
+        String result = "";
+        for (Member mem : members) {
+            if (!insertObject(mem)) {
+                flag = false;
+                result = mem.getMaTV().toString();
+                break;
+            }
+            addedMemberIds.add(mem.getMaTV());
+        }
+        if (flag == false && addedMemberIds.size() > 0) {
+            for (Long id : addedMemberIds) {
+                removeObject(id);
+            }
+        }
+        return result;
     }
 
     // Update member information with maTV => test done
@@ -49,6 +72,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         Member updatedMember = (Member) obj;
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToUpdate = session.get(Member.class, updatedMember.getMaTV());
             if (memberToUpdate != null) {
@@ -62,11 +86,35 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
+        }
+    }
+
+    @SuppressWarnings("finally")
+    public boolean updateMemberMaTV(Long oldMaTV, Long newMaTV) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        boolean result = true;
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaUpdate<Member> updateCriteria = criteriaBuilder.createCriteriaUpdate(Member.class);
+            Root<Member> memberRoot = updateCriteria.from(Member.class);
+
+            updateCriteria.set("maTV", newMaTV); // Set the new maTV value
+            updateCriteria.where(criteriaBuilder.equal(memberRoot.get("maTV"), oldMaTV)); // Update where maTV matches oldMaTV
+
+            session.createQuery(updateCriteria).executeUpdate();
+            transaction.commit();
+        } catch (Exception e) {
+            System.out.println(e.getLocalizedMessage());
+            transaction.rollback();
+            result = false;
+        } finally {
+            session.close();
+            return result;
         }
     }
 
@@ -75,6 +123,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean removeObject(Long maTV) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             Member memberToDelete = session.get(Member.class, maTV);
             if (memberToDelete != null) {
@@ -84,11 +133,10 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
         } catch (Exception e) {
             System.out.println(e.getLocalizedMessage());
             transaction.rollback();
-            session.close();
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
         }
     }
 
@@ -117,6 +165,7 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
     public boolean deleteMembersByConditions(String khoa, String nganh, String maTVSubstring) {
         Session session = sessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
+        boolean result = true;
         try {
             CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
             CriteriaDelete<Member> deleteCriteria = criteriaBuilder.createCriteriaDelete(Member.class);
@@ -144,12 +193,27 @@ public class MemberDAL implements IObjectDAL, IMemberDAL {
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-            session.close();
             System.out.println(e.getLocalizedMessage());
-            return false;
+            result = false;
         } finally {
             session.close();
-            return true;
+            return result;
+        }
+    }
+
+    public List<Member> searchMembersByName(String name) {
+        Session session = sessionFactory.getSessionFactory().openSession();
+        try {
+            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+            CriteriaQuery<Member> query = criteriaBuilder.createQuery(Member.class);
+            Root<Member> memberRoot = query.from(Member.class);
+    
+            query.select(memberRoot)
+                .where(criteriaBuilder.like(memberRoot.get("hoTen").as(String.class), "%" + name + "%"));
+    
+            return session.createQuery(query).getResultList();
+        } finally {
+            session.close();
         }
     }
 

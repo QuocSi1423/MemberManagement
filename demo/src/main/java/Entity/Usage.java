@@ -18,7 +18,7 @@ public class Usage {
     @Column(name = "MaTT")
     private Integer usageId;
 
-    @Column(name = "MaTV")
+    @Column(name = "MaTV", insertable = false, updatable = false)
     private Integer memberId;
 
     @Column(name = "MaTB")
@@ -33,8 +33,8 @@ public class Usage {
     @Column(name = "TGTra")
     private Date returnTime;
 
-     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV", referencedColumnName = "MaTV", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV") 
     private Member member;
 
     public Usage() {

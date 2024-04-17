@@ -69,13 +69,13 @@ public class ViolationDAL implements IViolationDAL {
   }
 
   @Override
-  public List<Violation> getViolationListByFilter(Integer status, Date startDate, Date endDate) {
+  public List<Violation> getViolationListByFilter(Integer memberId, Integer status, Date startDate, Date endDate) {
     
     List<Violation> listViolations = null;
     try {
       Session session = this.sessionFactory.openSession();
-      String hql = "SELECT v FROM Violation v JOIN FETCH v.member WHERE (:status is null or v.status = :status) and (:startDate is null or :endDate is null or (v.handlingDate < :endDate and v.handlingDate > :startDate))";
-      listViolations = session.createQuery(hql, Violation.class).setParameter("status", status).setParameter("startDate", startDate).setParameter("endDate", endDate).list();
+      String hql = "SELECT v FROM Violation v JOIN FETCH v.member WHERE (:memberId is null or v.maTV = :memberId) (:status is null or v.status = :status) and (:startDate is null or :endDate is null or (v.handlingDate < :endDate and v.handlingDate > :startDate))";
+      listViolations = session.createQuery(hql, Violation.class).setParameter("memberId", memberId).setParameter("status", status).setParameter("startDate", startDate).setParameter("endDate", endDate).list();
       return listViolations;
     } catch (Exception e) {
       throw e;
