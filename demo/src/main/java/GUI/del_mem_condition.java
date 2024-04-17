@@ -209,6 +209,7 @@ public class del_mem_condition extends javax.swing.JFrame {
     public void changeFaculty() {
         String faculty = (String) this.facultyOfMemJCB.getSelectedItem();
         if(faculty.equals("Chọn tất cả")) {
+            this.majorOfMemJCB.removeAllItems();
             this.majorOfMemJCB.addItem("Chọn tất cả");
             return;
         }
@@ -220,7 +221,7 @@ public class del_mem_condition extends javax.swing.JFrame {
             for (String item : major) {
                 this.majorOfMemJCB.addItem(item);
             }
-            
+            return;
         } else {
             JOptionPane.showMessageDialog(null, "Không tìm thấy ngành của khoa này!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
