@@ -23,12 +23,12 @@ public class Member {
     private String nganh;
 
     @Column(name = "SDT") // This annotation specifies the mapped column name
-    private String sdt;
+    private int sdt;
 
     public Member() {}
 
     // Constructor (optional but can improve readability)
-    public Member(Long maTV, String hoTen, String khoa, String nganh, String sdt) {
+    public Member(Long maTV, String hoTen, String khoa, String nganh, int sdt) {
         this.maTV = maTV;
         this.hoTen = hoTen;
         this.khoa = khoa;
@@ -36,7 +36,7 @@ public class Member {
         this.sdt = sdt;
     }
 
-    public Member(String hoTen, String khoa, String nganh, String sdt) {
+    public Member(String hoTen, String khoa, String nganh, int sdt) {
         // this.maTV = maTV; // This constructor can be used if maTV is auto-generated
         this.hoTen = hoTen;
         this.khoa = khoa;
@@ -77,11 +77,11 @@ public class Member {
         this.nganh = nganh;
     }
 
-    public String getSdt() {
+    public int getSdt() {
         return sdt;
     }
 
-    public void setSdt(String sdt) {
+    public void setSdt(int sdt) {
         this.sdt = sdt;
     }
 

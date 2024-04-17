@@ -16,43 +16,6 @@ import javax.persistence.Table;
 
 public class Violation {
 
-@Id
-@Column(name = "MaXL")
- private Integer violationId;
-
- @Column(name = "MaTV")
- private Integer memberId;
- 
- @Column(name = "HinhThucXL")
- private String hadlingType;
- 
- @Column(name = "SoTien")
- private Integer fine;
- 
- @Column(name = "NgayXL")
- private Date handlingDate;
- 
- @Column(name = "TrangThaiXL") 
- private Integer status;
-
-  @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "MaTV", referencedColumnName = "MaTV", insertable = false, updatable = false)
- private Member member;
-
- public Violation(){
-
- } 
-
- public Violation(Integer violationId, Integer memberId, String hadlingType, Integer fine, Date handlingDate,
-    Integer status) {
-  this.violationId = violationId;
-  this.memberId = memberId;
-  this.hadlingType = hadlingType;
-  this.fine = fine;
-  this.handlingDate = handlingDate;
-  this.status = status;
-}
-
     @Id
     @Column(name = "MaXL")
     private Integer violationId;

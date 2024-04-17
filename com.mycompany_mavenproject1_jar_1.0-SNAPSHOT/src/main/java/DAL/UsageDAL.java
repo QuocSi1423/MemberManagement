@@ -1,8 +1,6 @@
 package DAL;
 
 import DAL.IDAL.IUsageDAL;
-import static DAL.IDAL.IUsageDAL.FILTER_NOT_YET_RETURNED;
-import static DAL.IDAL.IUsageDAL.FILTER_RETURNED;
 import Entity.Usage;
 import Entity.Violation;
 
@@ -48,7 +46,7 @@ public class UsageDAL implements IUsageDAL {
         try {
             Session session = this.sessionFactory.openSession();
             transaction = session.beginTransaction();
-            session.delete(new Usage(usageId));
+            session.delete(new Violation(usageId));
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -90,25 +88,6 @@ public class UsageDAL implements IUsageDAL {
             throw e;
         }
     }
-    
-    @Override
-    public List<Usage> getBorrowingListByMemberId(Integer id) {
-        List<Usage> listBorrowing = null;
-        try {
-            Session session = this.sessionFactory.openSession();
-            
-            String hql = "from Usage where (MaTV = :memberId)";
-
-            listBorrowing = session
-                    .createQuery(hql, Usage.class)
-                    .setParameter("memberId", id)
-                    .list();
-
-            return listBorrowing;
-        } catch (Exception e) {
-            throw e;
-        }
-    }
 
     @Override
     public List<Usage> getEntryList(Date startDate, Date endDate) {
@@ -131,23 +110,20 @@ public class UsageDAL implements IUsageDAL {
     }
 
     @Override
-  public void insertReturnTime(Integer usageId, Date returnTime) {
-    Transaction transaction = null;
-    try (Session session = this.sessionFactory.openSession()) {
-        transaction = session.beginTransaction();
-
-        Usage usage = session.get(Usage.class, usageId);
-        usage.setReturnTime(returnTime);
-
-        session.update(usage);
-        transaction.commit();
-    } catch (Exception e) {
-        if (transaction != null) {
+    public void insertReturnTime(Integer usageId, Date returnTime) {
+        Transaction transaction = null;
+        try {
+            Session session = this.sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            Usage usage = getUsage(usageId);
+            usage.setReturnTime(returnTime);
+            session.update(usage);
+            transaction.commit();
+        } catch (Exception e) {
             transaction.rollback();
+            throw e;
         }
-        throw e;
     }
-}
 
     @Override
     public void deleteReturnTime(Integer usageId) {

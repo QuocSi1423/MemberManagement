@@ -1,20 +1,14 @@
-
 package DAL;
 
 import java.util.ArrayList;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.Root;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import com.google.protobuf.LazyStringArrayList;
 
 import Entity.Equipment;
 
-import  javax.persistence.criteria.Predicate;
 import DAL.IDAL.*;
 
 public class EquipmentDAL implements IObjectDAL, IEquipmentDAL{
@@ -84,27 +78,6 @@ public class EquipmentDAL implements IObjectDAL, IEquipmentDAL{
         } finally {
             session.close();
             return true;
-        }
-    }
-
-    public void removeEquipmentByFilter(int type){
-        Transaction transaction = null;
-        try (Session session = sessionFactory.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaDelete<Equipment> criteriaDelete = builder.createCriteriaDelete(Equipment.class);
-            Root<Equipment> root = criteriaDelete.from(Equipment.class);
-
-            criteriaDelete.where(builder.like(root.get("maTB").as(String.class), type + "%"));
-
-            // Thực hiện xóa
-            int deletedCount = session.createQuery(criteriaDelete).executeUpdate();
-
-            transaction.commit();
-
-        } catch (Exception e) {
-            throw e;
         }
     }
     
