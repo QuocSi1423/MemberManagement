@@ -18,6 +18,8 @@ public interface IUsageDAL {
     public Usage getUsage(Integer usageId);
     
     public List<Usage> getBorrowingListByFilter(Integer filter,  Date startDate, Date endDate);
+    
+    public List<Usage> getBorrowingListByMemberId(Integer id);
 
     public List<Usage> getEntryList(Date startDate, Date endDate);
 

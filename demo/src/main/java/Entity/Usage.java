@@ -12,7 +12,6 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "thongtinsd")
-
 public class Usage {
 
     @Id
@@ -35,11 +34,11 @@ public class Usage {
     private Date returnTime;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "MaTV") // Tên cột trong bảng Usage để lưu khóa ngoại
+    @JoinColumn(name = "MaTV",  referencedColumnName = "MaTV") 
     private Member member;
 
-
-    public Usage() {}
+    public Usage() {
+    }
 
     public Usage(Integer usageId) {
         this.usageId = usageId;
@@ -99,8 +98,15 @@ public class Usage {
         return returnTime;
     }
 
-    public void setReturnTime(Date returningTime) {
-        this.returnTime = returningTime;
+    public void setReturnTime(Date returnTime) {
+        this.returnTime = returnTime;
     }
 
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 }
